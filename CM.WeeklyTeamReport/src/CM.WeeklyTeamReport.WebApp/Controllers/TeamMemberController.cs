@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 
 namespace CM.WeeklyTeamReport.WebApp.Controllers
 {
@@ -15,14 +16,22 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
     [Route("api/companies/{companyId}/team-members")]
     public class TeamMemberController : ControllerBase
     {
+
+        private readonly IConfiguration _configuration;
         private readonly IRepository<TeamMember> _repository;
 
         [ActivatorUtilitiesConstructor]
+        public TeamMemberController(IRepository<TeamMember> repository, IConfiguration configuration)
+        {
+            _repository = repository;
+            _configuration = configuration;
+        }
+
         public TeamMemberController(IRepository<TeamMember> repository)
         {
             _repository = repository;
         }
-        
+
         public TeamMemberController()
         {
         }
@@ -35,7 +44,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             {
                 return new BadRequestObjectResult("CompanyId should be positive integer.");
             }
-            TeamMemberRepository teamMemberRepository = new TeamMemberRepository();
+            TeamMemberRepository teamMemberRepository = new TeamMemberRepository(_configuration);
             var result = teamMemberRepository.ReadAllById(Convert.ToInt32(companyId));
             if (result.Count == 0)
             {

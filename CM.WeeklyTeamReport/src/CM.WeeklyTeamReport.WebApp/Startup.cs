@@ -57,7 +57,7 @@ namespace CM.WeeklyTeamReport.WebApp
                 });
             }
             
-            //app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

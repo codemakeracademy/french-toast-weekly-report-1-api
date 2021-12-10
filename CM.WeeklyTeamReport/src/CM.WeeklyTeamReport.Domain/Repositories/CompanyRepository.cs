@@ -11,11 +11,14 @@ namespace CM.WeeklyTeamReport.Domain
     public class CompanyRepository : IRepository<Company>
     {
         private readonly IConfiguration _configuration;
-
         public CompanyRepository(IConfiguration configuration)
         {
             _configuration = configuration;
         }
+
+        //string connectionString = "Server=ANTON-PC;Database=WeeklyTeamReportLib;Trusted_Connection=True;";
+        
+
         SqlConnection GetSqlConnection()
         {
             var connectionString = _configuration.GetConnectionString("Sql");

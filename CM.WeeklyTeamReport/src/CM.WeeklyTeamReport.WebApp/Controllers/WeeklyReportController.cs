@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 
 namespace CM.WeeklyTeamReport.WebApp.Controllers
 {
@@ -15,13 +16,21 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
     [Route("api/companies/{companyId}/team-members/{teamMemberId}/reports")]
     public class WeeklyReportController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly IRepository<WeeklyReport> _repository;
 
         [ActivatorUtilitiesConstructor]
+        public WeeklyReportController(IRepository<WeeklyReport> repository, IConfiguration configuration)
+        {
+            _repository = repository;
+            _configuration = configuration;
+        }
+
         public WeeklyReportController(IRepository<WeeklyReport> repository)
         {
             _repository = repository;
         }
+
         public WeeklyReportController()
         {
         }
@@ -34,7 +43,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             {
                 return new BadRequestObjectResult("TeamMemberId should be positive integer.");
             }
-            WeeklyReportRepository weeklyReportRepository = new WeeklyReportRepository();
+            WeeklyReportRepository weeklyReportRepository = new WeeklyReportRepository(_configuration);
             var result = weeklyReportRepository.ReadAllById(Convert.ToInt32(teamMemberId));
             if (result.Count == 0)
             {
@@ -43,7 +52,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             return new OkObjectResult(result);
         }
 
-        [Route("{id:int}")]
+        [Route("{weeklyReportId}")]
         [HttpGet]
         public ActionResult<WeeklyReport> Read([FromRoute] string companyId, [FromRoute] string teamMemberId, [FromRoute] string weeklyReportId)
         {

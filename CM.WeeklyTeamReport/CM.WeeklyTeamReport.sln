@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CM.WeeklyTeamReport.Domain.
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CM.WeeklyTeamReport.Database", "src\CM.WeeklyTeamReport.Database\CM.WeeklyTeamReport.Database.sqlproj", "{C6BBE85C-F725-430E-88BC-C4C2623CD8D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CM.WeeklyTeamReport.WebApp", "src\CM.WeeklyTeamReport.WebApp\CM.WeeklyTeamReport.WebApp.csproj", "{452A0A25-8EC6-4C77-AE21-BA5D2AB42821}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CM.WeeklyTeamReport.WebApp", "src\CM.WeeklyTeamReport.WebApp\CM.WeeklyTeamReport.WebApp.csproj", "{452A0A25-8EC6-4C77-AE21-BA5D2AB42821}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CM.WeeklyTeamReport.WebApp.Tests", "test\CM.WeeklyTeamReport.WebApp.Tests\CM.WeeklyTeamReport.WebApp.Tests.csproj", "{9FC0136D-CD9D-45C4-BBF7-B8450C6B63A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CM.WeeklyTeamReport.WebApp.Tests", "test\CM.WeeklyTeamReport.WebApp.Tests\CM.WeeklyTeamReport.WebApp.Tests.csproj", "{9FC0136D-CD9D-45C4-BBF7-B8450C6B63A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
