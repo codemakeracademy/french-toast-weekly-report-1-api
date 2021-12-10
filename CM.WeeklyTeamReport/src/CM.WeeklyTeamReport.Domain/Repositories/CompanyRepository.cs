@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
@@ -9,9 +10,15 @@ namespace CM.WeeklyTeamReport.Domain
     [ExcludeFromCodeCoverage]
     public class CompanyRepository : IRepository<Company>
     {
-        string connectionString = "Server=ANTON-PC;Database=WeeklyTeamReportLib;Trusted_Connection=True;";
+        private readonly IConfiguration _configuration;
+
+        public CompanyRepository(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         SqlConnection GetSqlConnection()
         {
+            var connectionString = _configuration.GetConnectionString("Sql");
             var connection = new SqlConnection(connectionString);
             connection.Open();
             return connection;
