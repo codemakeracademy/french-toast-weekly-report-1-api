@@ -11,14 +11,26 @@ services:
             - 1433:1433
         volumes:
             - mssql-volume:/var/opt/mssql
-    web:
-        container_name: weeklyreportapi
+    dacpac:
+        container_name: dacpacagent
         build:
-            context: .
-            dockerfile: src/CM.WeeklyTeamReport.WebApp/Dockerfile
-        ports:
-            - 8087:80
+            context: src/CM.WeeklyTeamReport.Database
+            dockerfile: Dockerfile
         environment:
-            ASPNETCORE_ENVIRONMENT: Docker
+            TargetServerName: Docker
+            TargetDatabaseName: WeeklyTeamReportLib
+            TargetUser: sa
+            TargetPassword: Password.
+        depends_on:
+            - db
+    web1:
+      container_name: weeklyreportapi
+      build:
+          context: .
+          dockerfile: src/CM.WeeklyTeamReport.WebApp/Dockerfile
+      ports:
+          - 8087:80
+      environment:
+          ASPNETCORE_ENVIRONMENT: Docker
 volumes:
     mssql-volume:
