@@ -4,4 +4,7 @@ COPY ["CM.WeeklyTeamReport.Database.csproj", "CM.WeeklyTeamReport.Database.cspro
 RUN dotnet restore "CM.WeeklyTeamReport.Database.csproj"
 COPY . .
 RUN dotnet build "CM.WeeklyTeamReport.Database.csproj"
-ENTRYPOINT [ "dotnet", "publish", "/src/CM.WeeklyTeamReport.Database.csproj", "/p:TargetServerName=$TargetServerName", "/p:TargetDatabaseName=$TargetDatabaseName", "/p:TargetUser=$TargetUser", "/p:TargetPassword=$TargetPassword" ]
+ENTRYPOINT [ "dotnet" ]
+CMD [ "publish", "/src/CM.WeeklyTeamReport.Database.csproj", \
+"/p:TargetServerName=$TargetServerName", "/p:TargetDatabaseName=$TargetDatabaseName", \
+"/p:TargetUser=$TargetUser", "/p:TargetPassword=$TargetPassword" ]
