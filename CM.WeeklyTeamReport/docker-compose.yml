@@ -17,7 +17,7 @@ services:
             context: src/CM.WeeklyTeamReport.Database
             dockerfile: Dockerfile
         environment:
-            TargetServerName: Docker
+            TargetServerName: db
             TargetDatabaseName: WeeklyTeamReportLib
             TargetUser: sa
             TargetPassword: Password.
