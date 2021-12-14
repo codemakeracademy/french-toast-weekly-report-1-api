@@ -11,6 +11,8 @@ services:
             - 1435:1433
         volumes:
             - mssql-volume:/var/opt/mssql
+        networks:
+          - front
     dacpac:
         container_name: dacpacagent
         build:
@@ -23,14 +25,22 @@ services:
             TargetPassword: Password.
         depends_on:
             - db
+        networks:
+            - front
     web1:
-      container_name: weeklyreportapi
-      build:
-          context: .
-          dockerfile: src/CM.WeeklyTeamReport.WebApp/Dockerfile
-      ports:
-          - 8087:80
-      environment:
-          ASPNETCORE_ENVIRONMENT: Docker
+        container_name: weeklyreportapi
+        build:
+            context: .
+            dockerfile: src/CM.WeeklyTeamReport.WebApp/Dockerfile
+        ports:
+            - 8087:80
+        environment:
+            ASPNETCORE_ENVIRONMENT: Docker
+        networks:
+            - front
+
 volumes:
     mssql-volume:
+networks:
+    front:
+        driver: bridge
