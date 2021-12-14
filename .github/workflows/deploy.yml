@@ -14,7 +14,7 @@ jobs:
           key: ${{secrets.SSH_KEY}}
           username: ${{secrets.SSH_USERNAME}}
           script: |
-            cd ../french-toast-weekly-report-1-api
+            cd french-toast-weekly-report-1-api
             git pull
             cd CM.WeeklyTeamReport
             docker-compose up -d --build
