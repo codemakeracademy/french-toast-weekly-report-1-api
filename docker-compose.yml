@@ -16,7 +16,7 @@ services:
     dacpac:
         container_name: dacpacagent
         build:
-            context: src/CM.WeeklyTeamReport.Database
+            context: CM.WeeklyTeamReport/src/CM.WeeklyTeamReport.Database
             dockerfile: Dockerfile
         environment:
             TargetServerName: db
@@ -31,7 +31,7 @@ services:
         container_name: weeklyreportapi
         build:
             context: .
-            dockerfile: src/CM.WeeklyTeamReport.WebApp/Dockerfile
+            dockerfile: CM.WeeklyTeamReport/src/CM.WeeklyTeamReport.WebApp/Dockerfile
         ports:
             - 8087:80
         environment:
