@@ -12,7 +12,7 @@ services:
         volumes:
             - mssql-volume:/var/opt/mssql
         networks:
-          - front
+            - front
     dacpac:
         container_name: dacpacagent
         build:
