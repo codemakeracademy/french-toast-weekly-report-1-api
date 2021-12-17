@@ -49,7 +49,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Company> Create([FromQuery] Company company)
+        public ActionResult<Company> Create([FromBody] Company company)
         {
             if (company == null)
             {
@@ -60,7 +60,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
 
         [HttpPut]
-        public ActionResult<Company> Update([FromQuery] Company company)
+        public ActionResult<Company> Update([FromBody] Company company)
         {
             if (company == null)
             {
