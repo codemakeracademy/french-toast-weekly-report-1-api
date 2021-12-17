@@ -64,6 +64,6 @@
     <Build Include="dbo\Tables\TeamMembers.sql" />
     <Build Include="dbo\Tables\Morales.sql" />
     <Build Include="dbo\Tables\Companies.sql" />
-    <Build Include="dbo\Tables\ReportFromReportTo.sql" />
+    <Build Include="dbo\Tables\ReportFromTo.sql" />
   </ItemGroup>
 </Project>
