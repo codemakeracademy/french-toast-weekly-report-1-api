@@ -75,7 +75,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<TeamMember> Create([FromQuery] TeamMember teamMember)
+        public ActionResult<TeamMember> Create([FromBody] TeamMember teamMember)
         {
             if (teamMember == null)
             {
@@ -86,7 +86,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
 
         [HttpPut]
-        public ActionResult<TeamMember> Update([FromQuery] TeamMember teamMember)
+        public ActionResult<TeamMember> Update([FromBody] TeamMember teamMember)
         {
             if (teamMember == null)
             {

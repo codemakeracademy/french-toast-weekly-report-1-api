@@ -77,7 +77,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<WeeklyReport> Create([FromQuery] WeeklyReport weeklyReport, [FromRoute] string companyId)
+        public ActionResult<WeeklyReport> Create([FromBody] WeeklyReport weeklyReport, [FromRoute] string companyId)
         {
             if (weeklyReport == null)
             {
@@ -88,7 +88,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
 
         [HttpPut]
-        public ActionResult<WeeklyReport> Update([FromQuery] WeeklyReport weeklyReport)
+        public ActionResult<WeeklyReport> Update([FromBody] WeeklyReport weeklyReport)
         {
             if (weeklyReport == null)
             {

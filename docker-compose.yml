@@ -12,7 +12,7 @@ services:
         volumes:
             - mssql-volume:/var/opt/mssql
         networks:
-          - front
+            - front
     dacpac:
         container_name: dacpacagent
         build:
@@ -35,7 +35,7 @@ services:
         ports:
             - 8087:80
         environment:
-            ASPNETCORE_ENVIRONMENT: Docker
+            ASPNETCORE_ENVIRONMENT: Development
         networks:
             - front
 
