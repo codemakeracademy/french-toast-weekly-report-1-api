@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace CM.WeeklyTeamReport.Domain
 {
@@ -18,10 +18,8 @@ namespace CM.WeeklyTeamReport.Domain
 
         public WeeklyReportRepository()
         {
+
         }
-
-        //string connectionString = "Server=ANTON-PC;Database=WeeklyTeamReportLib;Trusted_Connection=True;";
-
 
         SqlConnection GetSqlConnection()
         {
@@ -30,6 +28,7 @@ namespace CM.WeeklyTeamReport.Domain
             connection.Open();
             return connection;
         }
+
         public WeeklyReport Create(WeeklyReport weeklyReport)
         {
             using (var connection = GetSqlConnection())
@@ -39,51 +38,51 @@ namespace CM.WeeklyTeamReport.Domain
                                              "VALUES (@StartDate,  @EndDate, @MoraleValueId, @StressValueId, @WorkloadValueId, @MoraleComment, @StressComment, @WorkloadComment, @WeekHighComment," +
                                              "@WeekLowComment, @AnythingElseComment, @TeamMemberId);" +
                                              "SELECT * FROM WeeklyReports WHERE WeeklyReportId = SCOPE_IDENTITY()", connection);
-                SqlParameter StartDate = new SqlParameter("@StartDate", System.Data.SqlDbType.Date)
+                SqlParameter StartDate = new("@StartDate", SqlDbType.Date)
                 {
-                    Value = weeklyReport.StartDate
+                    Value = weeklyReport.DateFrom
                 };
-                SqlParameter EndDate = new SqlParameter("@EndDate", System.Data.SqlDbType.Date)
+                SqlParameter EndDate = new("@EndDate", SqlDbType.Date)
                 {
-                    Value = weeklyReport.EndDate
+                    Value = weeklyReport.DateTo
                 };
-                SqlParameter MoraleValueId = new SqlParameter("@MoraleValueId", System.Data.SqlDbType.Int)
+                SqlParameter MoraleValueId = new("@MoraleValueId", SqlDbType.Int)
                 {
-                    Value = (int)weeklyReport.MoraleValue
+                    Value = (int)weeklyReport.MoraleValueId
                 };
-                SqlParameter StressValueId = new SqlParameter("@StressValueId", System.Data.SqlDbType.Int)
+                SqlParameter StressValueId = new("@StressValueId", SqlDbType.Int)
                 {
-                    Value = (int)weeklyReport.StressValue
+                    Value = (int)weeklyReport.StressValueId
                 };
-                SqlParameter WorkloadValueId = new SqlParameter("@WorkloadValueId", System.Data.SqlDbType.Int)
+                SqlParameter WorkloadValueId = new("@WorkloadValueId", SqlDbType.Int)
                 {
-                    Value = (int)weeklyReport.WorkloadValue
+                    Value = (int)weeklyReport.WorkloadValueId
                 };
-                SqlParameter MoraleComment = new SqlParameter("@MoraleComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter MoraleComment = new("@MoraleComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.MoraleComment
                 };
-                SqlParameter StressComment = new SqlParameter("@StressComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter StressComment = new("@StressComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.StressComment
                 };
-                SqlParameter WorkloadComment = new SqlParameter("@WorkloadComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter WorkloadComment = new("@WorkloadComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.WorkloadComment
                 };
-                SqlParameter WeekHighComment = new SqlParameter("@WeekHighComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter WeekHighComment = new("@WeekHighComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.WeekHighComment
                 };
-                SqlParameter WeekLowComment = new SqlParameter("@WeekLowComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter WeekLowComment = new("@WeekLowComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.WeekLowComment
                 };
-                SqlParameter AnythingElseComment = new SqlParameter("@AnythingElseComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter AnythingElseComment = new("@AnythingElseComment", SqlDbType.NVarChar, 400)
                 {
                     Value = weeklyReport.AnythingElseComment
                 };
-                SqlParameter TeamMemberId = new SqlParameter("@TeamMemberId", System.Data.SqlDbType.Int)
+                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
                 {
                     Value = weeklyReport.TeamMemberId
                 };
@@ -104,7 +103,7 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("DELETE FROM WeeklyReports WHERE WeeklyReportId = @WeeklyReportId", connection);
-                SqlParameter WeeklyReportId = new SqlParameter("@WeeklyReportId", System.Data.SqlDbType.Int)
+                SqlParameter WeeklyReportId = new("@WeeklyReportId", SqlDbType.Int)
                 {
                     Value = weeklyReportId
                 };
@@ -119,7 +118,7 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("SELECT * FROM WeeklyReports WHERE WeeklyReportId = @WeeklyReportId", connection);
-                SqlParameter WeeklyReportId = new SqlParameter("@WeeklyReportId", System.Data.SqlDbType.Int)
+                SqlParameter WeeklyReportId = new("@WeeklyReportId", SqlDbType.Int)
                 {
                     Value = weeklyReportId
                 };
@@ -143,51 +142,51 @@ namespace CM.WeeklyTeamReport.Domain
                                              "MoraleComment = @MoraleComment, StressComment = @StressComment, WorkloadComment = @WorkloadComment, WeekHighComment = @WeekHighComment, WeekLowComment = @WeekLowComment, AnythingElseComment = @AnythingElseComment " +
                                              "WHERE WeeklyReportId = @WeeklyReportId;" +
                                              "SELECT * FROM WeeklyReports WHERE WeeklyReportId = @WeeklyReportId", connection);
-                SqlParameter StartDate = new SqlParameter("@StartDate", System.Data.SqlDbType.Date)
+                SqlParameter StartDate = new("@StartDate", SqlDbType.Date)
                 {
-                    Value = weeklyReport.StartDate
+                    Value = weeklyReport.DateFrom
                 };
-                SqlParameter EndDate = new SqlParameter("@EndDate", System.Data.SqlDbType.Date)
+                SqlParameter EndDate = new("@EndDate", SqlDbType.Date)
                 {
-                    Value = weeklyReport.EndDate
+                    Value = weeklyReport.DateTo
                 };
-                SqlParameter MoraleValueId = new SqlParameter("@MoraleValueId", System.Data.SqlDbType.Int)
+                SqlParameter MoraleValueId = new("@MoraleValueId", SqlDbType.Int)
                 {
-                    Value = (int)weeklyReport.MoraleValue
+                    Value = (int)weeklyReport.MoraleValueId
                 };
-                SqlParameter StressValueId = new SqlParameter("@StressValueId", System.Data.SqlDbType.Int)
+                SqlParameter StressValueId = new("@StressValueId", SqlDbType.Int)
                 {
-                    Value = (int)weeklyReport.StressValue
+                    Value = (int)weeklyReport.StressValueId
                 };
-                SqlParameter WorkloadValueId = new SqlParameter("@WorkloadValueId", System.Data.SqlDbType.Int)
+                SqlParameter WorkloadValueId = new("@WorkloadValueId", SqlDbType.Int)
                 {
-                    Value = (int)weeklyReport.WorkloadValue
+                    Value = (int)weeklyReport.WorkloadValueId
                 };
-                SqlParameter MoraleComment = new SqlParameter("@MoraleComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter MoraleComment = new("@MoraleComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.MoraleComment
                 };
-                SqlParameter StressComment = new SqlParameter("@StressComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter StressComment = new("@StressComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.StressComment
                 };
-                SqlParameter WorkloadComment = new SqlParameter("@WorkloadComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter WorkloadComment = new("@WorkloadComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.WorkloadComment
                 };
-                SqlParameter WeekHighComment = new SqlParameter("@WeekHighComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter WeekHighComment = new("@WeekHighComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.WeekHighComment
                 };
-                SqlParameter WeekLowComment = new SqlParameter("@WeekLowComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter WeekLowComment = new("@WeekLowComment", SqlDbType.NVarChar, 600)
                 {
                     Value = weeklyReport.WeekLowComment
                 };
-                SqlParameter AnythingElseComment = new SqlParameter("@AnythingElseComment", System.Data.SqlDbType.NVarChar)
+                SqlParameter AnythingElseComment = new("@AnythingElseComment", SqlDbType.NVarChar, 400)
                 {
                     Value = weeklyReport.AnythingElseComment
                 };
-                SqlParameter WeeklyReportId = new SqlParameter("@WeeklyReportId", System.Data.SqlDbType.Int)
+                SqlParameter WeeklyReportId = new("@WeeklyReportId", SqlDbType.Int)
                 {
                     Value = weeklyReport.WeeklyReportId
                 };
@@ -208,11 +207,11 @@ namespace CM.WeeklyTeamReport.Domain
         {
             return new WeeklyReport()
             {
-                StartDate = reader["StartDate"].ToString(),
-                EndDate = reader["EndDate"].ToString(),
-                MoraleValue = (Morales)(int)reader["MoraleValueId"],
-                StressValue = (Morales)(int)reader["StressValueId"],
-                WorkloadValue = (Morales)(int)reader["WorkloadValueId"],
+                DateFrom = DateTime.Parse(reader["DateFrom"].ToString()),
+                DateTo = DateTime.Parse(reader["DateTo"].ToString()),
+                MoraleValueId = (Morales)(int)reader["MoraleValueId"],
+                StressValueId = (Morales)(int)reader["StressValueId"],
+                WorkloadValueId = (Morales)(int)reader["WorkloadValueId"],
                 MoraleComment = reader["MoraleComment"].ToString(),
                 StressComment = reader["StressComment"].ToString(),
                 WorkloadComment = reader["WorkloadComment"].ToString(),
@@ -229,14 +228,37 @@ namespace CM.WeeklyTeamReport.Domain
             throw new NotImplementedException();
         }
 
-        public List<WeeklyReport> ReadAllById(int teamMemberId)
+        public List<WeeklyReport> ReadAllByIdAndReportTo(int teamMemberId)
         {
-            List<WeeklyReport> weeklyReports = new List<WeeklyReport>();
+            List<WeeklyReport> weeklyReports = new();
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("SELECT * FROM WeeklyReports WHERE TeamMemberId=@TeamMemberId", connection);
 
-                SqlParameter TeamMemberId = new SqlParameter("@TeamMemberId", System.Data.SqlDbType.Int)
+                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
+                {
+                    Value = teamMemberId
+                };
+
+                command.Parameters.Add(TeamMemberId);
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var weeklyReport = MapWeeklyReport(reader);
+                    weeklyReports.Add(weeklyReport);
+                }
+                return weeklyReports;
+            }
+        }
+
+        public List<WeeklyReport> ReadAllById(int teamMemberId)
+        {
+            List<WeeklyReport> weeklyReports = new();
+            using (var connection = GetSqlConnection())
+            {
+                var command = new SqlCommand("SELECT * FROM WeeklyReports WHERE TeamMemberId=@TeamMemberId", connection);
+
+                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
                 {
                     Value = teamMemberId
                 };
