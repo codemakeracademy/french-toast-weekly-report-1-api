@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CM.WeeklyTeamReport.Domain
+﻿namespace CM.WeeklyTeamReport.Domain
 {
     public enum Morales
     {

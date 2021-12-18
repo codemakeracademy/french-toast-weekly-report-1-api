@@ -1,18 +1,11 @@
 using CM.WeeklyTeamReport.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CM.WeeklyTeamReport.WebApp
 {
@@ -33,6 +26,7 @@ namespace CM.WeeklyTeamReport.WebApp
             services.AddTransient<IRepository<Company>, CompanyRepository>();
             services.AddTransient<IRepository<TeamMember>, TeamMemberRepository>();
             services.AddTransient<IRepository<WeeklyReport>, WeeklyReportRepository>();
+            services.AddTransient<IRepository<ReportsFromTo>, ReportsFromToRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -56,7 +50,7 @@ namespace CM.WeeklyTeamReport.WebApp
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Test API V1");
                 });
             }
-            
+
             // app.UseHttpsRedirection();
 
             app.UseRouting();

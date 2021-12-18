@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace CM.WeeklyTeamReport.Domain.Tests
@@ -10,13 +8,13 @@ namespace CM.WeeklyTeamReport.Domain.Tests
         [Fact]
         public void ShouldBeAbleToCreateWeeklyReportObject()
         {
-            WeeklyReport weeklyReport = new WeeklyReport() 
+            WeeklyReport weeklyReport = new()
             {
-                StartDate = "2021-12-12",
-                EndDate = "2021-12-12",
-                MoraleValue = Morales.Okay,
-                StressValue = Morales.Low,
-                WorkloadValue = Morales.Great,
+                DateFrom = DateTime.Parse("2021-12-12"),
+                DateTo = DateTime.Parse("2021-12-12"),
+                MoraleValueId = Morales.Okay,
+                StressValueId = Morales.Low,
+                WorkloadValueId = Morales.Great,
                 MoraleComment = "wadad",
                 StressComment = "wadad",
                 WorkloadComment = "wadad",
@@ -27,11 +25,11 @@ namespace CM.WeeklyTeamReport.Domain.Tests
                 TeamMemberId = 2
             };
             Assert.NotNull(weeklyReport);
-            Assert.Equal("2021-12-12", weeklyReport.StartDate);
-            Assert.Equal("2021-12-12", weeklyReport.EndDate);
-            Assert.Equal(Morales.Okay, weeklyReport.MoraleValue);
-            Assert.Equal(Morales.Low, weeklyReport.StressValue);
-            Assert.Equal(Morales.Great, weeklyReport.WorkloadValue);
+            Assert.Equal(DateTime.Parse("2021-12-12"), weeklyReport.DateFrom);
+            Assert.Equal(DateTime.Parse("2021-12-12"), weeklyReport.DateTo);
+            Assert.Equal(Morales.Okay, weeklyReport.MoraleValueId);
+            Assert.Equal(Morales.Low, weeklyReport.StressValueId);
+            Assert.Equal(Morales.Great, weeklyReport.WorkloadValueId);
             Assert.Equal("wadad", weeklyReport.MoraleComment);
             Assert.Equal("wadad", weeklyReport.StressComment);
             Assert.Equal("wadad", weeklyReport.WorkloadComment);
