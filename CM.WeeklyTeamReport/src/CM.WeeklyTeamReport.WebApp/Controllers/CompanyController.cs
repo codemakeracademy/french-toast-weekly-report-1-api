@@ -31,16 +31,16 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
 
         [Route("{companyId}")]
         [HttpGet]
-        public ActionResult<Company> Read(string id)
+        public ActionResult<Company> Read(string companyId)
         {
-            if (!Regex.IsMatch(id, @"^\d+$"))
+            if (!Regex.IsMatch(companyId, @"^\d+$"))
             {
                 return new BadRequestObjectResult("CompanyId should be positive integer.");
             }
-            var result = _repository.Read(Convert.ToInt32(id));
+            var result = _repository.Read(Convert.ToInt32(companyId));
             if (result == null)
             {
-                return new NotFoundObjectResult($"Company {id} Not Found");
+                return new NotFoundObjectResult($"Company {companyId} Not Found");
             }
             return new OkObjectResult(result);
         }
