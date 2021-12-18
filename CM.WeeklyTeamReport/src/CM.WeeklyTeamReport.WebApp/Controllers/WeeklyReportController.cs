@@ -1,14 +1,11 @@
 ﻿using CM.WeeklyTeamReport.Domain;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Configuration;
+using System.Text.RegularExpressions;
 
 namespace CM.WeeklyTeamReport.WebApp.Controllers
 {
@@ -43,7 +40,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             {
                 return new BadRequestObjectResult("TeamMemberId should be positive integer.");
             }
-            WeeklyReportRepository weeklyReportRepository = new WeeklyReportRepository(_configuration);
+            WeeklyReportRepository weeklyReportRepository = new(_configuration);
             var result = weeklyReportRepository.ReadAllById(Convert.ToInt32(teamMemberId));
             if (result.Count == 0)
             {

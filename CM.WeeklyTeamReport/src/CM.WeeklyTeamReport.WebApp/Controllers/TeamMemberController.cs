@@ -1,14 +1,11 @@
 ﻿using CM.WeeklyTeamReport.Domain;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Configuration;
+using System.Text.RegularExpressions;
 
 namespace CM.WeeklyTeamReport.WebApp.Controllers
 {
@@ -34,21 +31,48 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
 
         public TeamMemberController()
         {
+
         }
 
         [ExcludeFromCodeCoverage]
         [HttpGet]
-        public ActionResult<List<TeamMember>> ReadAll(string companyId)
+        public ActionResult<List<TeamMember>> ReadAllById(string companyId)
         {
             if (!Regex.IsMatch(companyId, @"^\d+$"))
             {
                 return new BadRequestObjectResult("CompanyId should be positive integer.");
             }
-            TeamMemberRepository teamMemberRepository = new TeamMemberRepository(_configuration);
+            TeamMemberRepository teamMemberRepository = new(_configuration);
             var result = teamMemberRepository.ReadAllById(Convert.ToInt32(companyId));
             if (result.Count == 0)
             {
                 return new NoContentResult();
+            }
+            return new OkObjectResult(result);
+        }
+
+        [Route("/api/team-members")]
+        [HttpGet]
+        public ActionResult<TeamMember> ReadAll()
+        {
+            TeamMemberRepository teamMemberRepository = new(_configuration);
+            var result = teamMemberRepository.ReadAll();
+            if (result == null)
+            {
+                return new NotFoundObjectResult($"TeamMembers Not Found");
+            }
+            return new OkObjectResult(result);
+        }
+
+        [Route("/api/team-members/{subject}")]
+        [HttpGet]
+        public ActionResult<TeamMember> ReadMemberBySub([FromRoute] string subject)
+        {
+            TeamMemberRepository teamMemberRepository = new(_configuration);
+            var result = teamMemberRepository.ReadMemberBySub(subject);
+            if (result == null)
+            {
+                return new NotFoundObjectResult($"TeamMember {subject} Not Found");
             }
             return new OkObjectResult(result);
         }
