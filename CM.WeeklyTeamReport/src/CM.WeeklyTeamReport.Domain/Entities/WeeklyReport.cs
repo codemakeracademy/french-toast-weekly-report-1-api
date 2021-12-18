@@ -5,8 +5,8 @@ namespace CM.WeeklyTeamReport.Domain
     public class WeeklyReport
     {
         public int WeeklyReportId { get; set; }
-        public DateTime DateFrom { get; set; }
-        public DateTime DateTo { get; set; }
+        public string DateFrom { get; set; }
+        public string DateTo { get; set; }
         public Morales MoraleValueId { get; set; }
         public Morales StressValueId { get; set; }
         public Morales WorkloadValueId { get; set; }

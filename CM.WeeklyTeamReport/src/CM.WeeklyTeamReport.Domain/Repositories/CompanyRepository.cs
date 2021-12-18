@@ -18,7 +18,7 @@ namespace CM.WeeklyTeamReport.Domain
 
         SqlConnection GetSqlConnection()
         {
-            var connectionString = _configuration.GetConnectionString("Sql");
+            var connectionString = _configuration.GetConnectionString("AntonM");
             var connection = new SqlConnection(connectionString);
             connection.Open();
             return connection;
@@ -126,7 +126,7 @@ namespace CM.WeeklyTeamReport.Domain
             {
                 CompanyId = (int)reader["CompanyId"],
                 CompanyName = reader["CompanyName"].ToString(),
-                JoinDate = DateTime.Parse(reader["JoinDate"].ToString())
+                JoinDate = DateTime.Parse(reader["JoinDate"].ToString()).ToString("yyyy-MM-hh")
             };
         }
 

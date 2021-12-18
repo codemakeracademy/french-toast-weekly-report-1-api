@@ -23,7 +23,7 @@ namespace CM.WeeklyTeamReport.Domain
 
         SqlConnection GetSqlConnection()
         {
-            var connectionString = _configuration.GetConnectionString("Sql");
+            var connectionString = _configuration.GetConnectionString("AntonM");
             var connection = new SqlConnection(connectionString);
             connection.Open();
             return connection;
@@ -207,8 +207,8 @@ namespace CM.WeeklyTeamReport.Domain
         {
             return new WeeklyReport()
             {
-                DateFrom = DateTime.Parse(reader["DateFrom"].ToString()),
-                DateTo = DateTime.Parse(reader["DateTo"].ToString()),
+                DateFrom = DateTime.Parse(reader["DateFrom"].ToString()).ToString("yyyy-MM-dd"),
+                DateTo = DateTime.Parse(reader["DateTo"].ToString()).ToString("yyyy-MM-dd"),
                 MoraleValueId = (Morales)(int)reader["MoraleValueId"],
                 StressValueId = (Morales)(int)reader["StressValueId"],
                 WorkloadValueId = (Morales)(int)reader["WorkloadValueId"],
