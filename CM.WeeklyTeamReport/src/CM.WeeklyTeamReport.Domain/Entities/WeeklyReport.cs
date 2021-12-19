@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CM.WeeklyTeamReport.Domain
 {
     public class WeeklyReport
     {
         public int WeeklyReportId { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
-        public Morales MoraleValue { get; set; }
-        public Morales StressValue { get; set; }
-        public Morales WorkloadValue { get; set; }
+        public string DateFrom { get; set; }
+        public string DateTo { get; set; }
+        public Morales MoraleValueId { get; set; }
+        public Morales StressValueId { get; set; }
+        public Morales WorkloadValueId { get; set; }
         public string MoraleComment { get; set; }
         public string StressComment { get; set; }
         public string WorkloadComment { get; set; }
@@ -22,18 +20,7 @@ namespace CM.WeeklyTeamReport.Domain
 
         public WeeklyReport()
         {
-            /*StartDate = startDate;
-            EndDate = endDate;
-            Year = year;
-            MoraleValue = moraleValue;
-            StressValue = stressValue;
-            WorkloadValue = workloadValue;
-            MoraleComment = moraleComment;
-            StressComment = stressComment;
-            WorkloadComment = workloadComment;
-            WeekHighComment = weekHighComment;
-            WeekLowComment = weekLowComment;
-            AnythingElseComment = anythingElseComment;*/
+
         }
     }
 }

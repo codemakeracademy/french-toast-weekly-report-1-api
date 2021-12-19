@@ -3,7 +3,6 @@ using CM.WeeklyTeamReport.WebApp.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -38,7 +37,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
             var fixture = new CompanyControllerFixture();
             fixture.CompanyRepository
                 .Setup(x => x.ReadAll())
-                .Returns(new List<Company>(){});
+                .Returns(new List<Company>() { });
             var controller = fixture.GetCompanyController();
             var actionResult = (NoContentResult)controller.ReadAll().Result;
             actionResult.Should().BeOfType<NoContentResult>();

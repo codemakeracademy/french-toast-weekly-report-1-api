@@ -1,10 +1,7 @@
 ﻿using CM.WeeklyTeamReport.Domain;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
 namespace CM.WeeklyTeamReport.WebApp.Controllers
@@ -32,18 +29,18 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             return new OkObjectResult(result);
         }
 
-        [Route("{id:int}")]
+        [Route("{companyId}")]
         [HttpGet]
-        public ActionResult<Company> Read(string id)
+        public ActionResult<Company> Read(string companyId)
         {
-            if (!Regex.IsMatch(id, @"^\d+$"))
+            if (!Regex.IsMatch(companyId, @"^\d+$"))
             {
                 return new BadRequestObjectResult("CompanyId should be positive integer.");
             }
-            var result = _repository.Read(Convert.ToInt32(id));
+            var result = _repository.Read(Convert.ToInt32(companyId));
             if (result == null)
             {
-                return new NotFoundObjectResult($"Company {id} Not Found");
+                return new NotFoundObjectResult($"Company {companyId} Not Found");
             }
             return new OkObjectResult(result);
         }

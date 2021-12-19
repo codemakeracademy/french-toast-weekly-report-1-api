@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace CM.WeeklyTeamReport.Domain
 {
@@ -16,9 +16,6 @@ namespace CM.WeeklyTeamReport.Domain
             _configuration = configuration;
         }
 
-        //string connectionString = "Server=ANTON-PC;Database=WeeklyTeamReportLib;Trusted_Connection=True;";
-        
-
         SqlConnection GetSqlConnection()
         {
             var connectionString = _configuration.GetConnectionString("Sql");
@@ -26,6 +23,7 @@ namespace CM.WeeklyTeamReport.Domain
             connection.Open();
             return connection;
         }
+
         public Company Create(Company company)
         {
             using (var connection = GetSqlConnection())
@@ -33,11 +31,11 @@ namespace CM.WeeklyTeamReport.Domain
                 var command = new SqlCommand("INSERT INTO Companies (CompanyName,  JoinDate)" +
                                                            "VALUES (@CompanyName, @JoinDate);" +
                                                            "SELECT * FROM Companies WHERE CompanyId = SCOPE_IDENTITY()", connection);
-                SqlParameter CompanyName = new SqlParameter("@CompanyName", System.Data.SqlDbType.NVarChar, 20)
+                SqlParameter CompanyName = new("@CompanyName", SqlDbType.NVarChar, 100)
                 {
                     Value = company.CompanyName
                 };
-                SqlParameter JoinDate = new SqlParameter("@JoinDate", System.Data.SqlDbType.Date)
+                SqlParameter JoinDate = new("@JoinDate", SqlDbType.Date)
                 {
                     Value = company.JoinDate
                 };
@@ -58,7 +56,7 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("DELETE FROM Companies WHERE CompanyId = @CompanyId", connection);
-                SqlParameter CompanyId = new SqlParameter("@CompanyId", System.Data.SqlDbType.Int)
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
                 {
                     Value = companyId
                 };
@@ -73,7 +71,7 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("SELECT * FROM Companies WHERE CompanyId = @CompanyId", connection);
-                SqlParameter CompanyId = new SqlParameter("@CompanyId", System.Data.SqlDbType.Int)
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
                 {
                     Value = companyId
                 };
@@ -96,15 +94,15 @@ namespace CM.WeeklyTeamReport.Domain
                                              "SET CompanyName = @CompanyName, JoinDate = @JoinDate " +
                                              "WHERE CompanyId = @CompanyId;" +
                                               "SELECT * FROM Companies WHERE CompanyId = @CompanyId", connection);
-                SqlParameter CompanyId = new SqlParameter("@CompanyId", System.Data.SqlDbType.Int)
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
                 {
                     Value = company.CompanyId
                 };
-                SqlParameter CompanyName = new SqlParameter("@CompanyName", System.Data.SqlDbType.NVarChar, 20)
+                SqlParameter CompanyName = new("@CompanyName", SqlDbType.NVarChar, 100)
                 {
                     Value = company.CompanyName
                 };
-                SqlParameter JoinDate = new SqlParameter("@JoinDate", System.Data.SqlDbType.Date)
+                SqlParameter JoinDate = new("@JoinDate", SqlDbType.Date)
                 {
                     Value = company.JoinDate
                 };
@@ -128,13 +126,13 @@ namespace CM.WeeklyTeamReport.Domain
             {
                 CompanyId = (int)reader["CompanyId"],
                 CompanyName = reader["CompanyName"].ToString(),
-                JoinDate = reader["JoinDate"].ToString()
+                JoinDate = DateTime.Parse(reader["JoinDate"].ToString()).ToString("yyyy-MM-hh")
             };
         }
 
         public List<Company> ReadAll()
         {
-            List<Company> companies = new List<Company>();
+            List<Company> companies = new();
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("SELECT * FROM Companies", connection);
@@ -147,7 +145,7 @@ namespace CM.WeeklyTeamReport.Domain
                 }
                 return companies;
             }
-            
+
         }
     }
 }

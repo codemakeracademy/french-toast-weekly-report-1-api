@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace CM.WeeklyTeamReport.Domain
 {
@@ -15,14 +14,10 @@ namespace CM.WeeklyTeamReport.Domain
         {
             _configuration = configuration;
         }
-
         public TeamMemberRepository()
         {
+
         }
-
-        //string connectionString = "Server=ANTON-PC;Database=WeeklyTeamReportLib;Trusted_Connection=True;";
-
-
         SqlConnection GetSqlConnection()
         {
             var connectionString = _configuration.GetConnectionString("Sql");
@@ -30,39 +25,40 @@ namespace CM.WeeklyTeamReport.Domain
             connection.Open();
             return connection;
         }
+
         public TeamMember Create(TeamMember teamMember)
         {
             using (var connection = GetSqlConnection())
             {
-                var command = new SqlCommand("INSERT INTO TeamMembers (FirstName,  LastName, Title, InviteLink, Mail, CompanyId)" +
-                                                           "VALUES (@FirstName,  @LastName, @Title, @InviteLink, @Mail, @CompanyId);" +
+                var command = new SqlCommand("INSERT INTO TeamMembers (FirstName,  LastName, Title, Mail, Subject, CompanyId)" +
+                                                           "VALUES (@FirstName,  @LastName, @Title, @Mail, @Subject, @CompanyId);" +
                                                            "SELECT * FROM TeamMembers WHERE TeamMemberId = SCOPE_IDENTITY()", connection);
-                SqlParameter FirstName = new SqlParameter("@FirstName", System.Data.SqlDbType.NVarChar, 20)
+                SqlParameter FirstName = new("@FirstName", SqlDbType.NVarChar, 20)
                 {
                     Value = teamMember.FirstName
                 };
-                SqlParameter LastName = new SqlParameter("@LastName", System.Data.SqlDbType.NVarChar, 20)
+                SqlParameter LastName = new("@LastName", SqlDbType.NVarChar, 20)
                 {
                     Value = teamMember.LastName
                 };
-                SqlParameter Title = new SqlParameter("@Title", System.Data.SqlDbType.NVarChar, 20)
+                SqlParameter Title = new("@Title", SqlDbType.NVarChar, 100)
                 {
                     Value = teamMember.Title
                 };
-                SqlParameter InviteLink = new SqlParameter("@InviteLink", System.Data.SqlDbType.NVarChar, 200)
+                SqlParameter Subject = new("@Subject", SqlDbType.NVarChar, 600)
                 {
-                    Value = teamMember.InviteLink
+                    Value = teamMember.Subject
                 };
-                SqlParameter Mail = new SqlParameter("@Mail", System.Data.SqlDbType.NVarChar, 100)
+                SqlParameter Mail = new("@Mail", SqlDbType.NVarChar, 100)
                 {
                     Value = teamMember.Mail
                 };
-                SqlParameter CompanyId = new SqlParameter("@CompanyId", System.Data.SqlDbType.Int)
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
                 {
                     Value = teamMember.CompanyId
                 };
 
-                command.Parameters.AddRange(new object[] { FirstName, LastName, Title, InviteLink, Mail, CompanyId });
+                command.Parameters.AddRange(new object[] { FirstName, LastName, Title, Mail, Subject, CompanyId });
                 var reader = command.ExecuteReader();
                 if (reader.Read())
                 {
@@ -77,7 +73,7 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("DELETE FROM TeamMembers WHERE TeamMemberId = @TeamMemberId", connection);
-                SqlParameter TeamMemberId = new SqlParameter("@TeamMemberId", System.Data.SqlDbType.Int)
+                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
                 {
                     Value = teamMemberId
                 };
@@ -92,7 +88,7 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("SELECT * FROM TeamMembers WHERE TeamMemberId = @TeamMemberId", connection);
-                SqlParameter TeamMemberId = new SqlParameter("@TeamMemberId", System.Data.SqlDbType.Int)
+                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
                 {
                     Value = teamMemberId
                 };
@@ -112,39 +108,31 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("UPDATE TeamMembers " +
-                                             "SET FirstName = @FirstName, LastName = @LastName, Title = @Title, InviteLink = @InviteLink, Mail = @Mail, CompanyId = @CompanyId " +
+                                             "SET FirstName = @FirstName, LastName = @LastName, Title = @Title, CompanyId = @CompanyId " +
                                              "WHERE TeamMemberId = @TeamMemberId;" +
                                              "SELECT * FROM TeamMembers WHERE TeamMemberId = @TeamMemberId", connection);
-                SqlParameter FirstName = new SqlParameter("@FirstName", System.Data.SqlDbType.NVarChar, 20)
+                SqlParameter FirstName = new("@FirstName", SqlDbType.NVarChar, 20)
                 {
                     Value = teamMember.FirstName
                 };
-                SqlParameter LastName = new SqlParameter("@LastName", System.Data.SqlDbType.NVarChar, 20)
+                SqlParameter LastName = new("@LastName", SqlDbType.NVarChar, 20)
                 {
                     Value = teamMember.LastName
                 };
-                SqlParameter Title = new SqlParameter("@Title", System.Data.SqlDbType.NVarChar, 20)
+                SqlParameter Title = new("@Title", SqlDbType.NVarChar, 100)
                 {
                     Value = teamMember.Title
                 };
-                SqlParameter InviteLink = new SqlParameter("@InviteLink", System.Data.SqlDbType.NVarChar, 200)
-                {
-                    Value = teamMember.InviteLink
-                };
-                SqlParameter Mail = new SqlParameter("@Mail", System.Data.SqlDbType.NVarChar, 100)
-                {
-                    Value = teamMember.Mail
-                };
-                SqlParameter CompanyId = new SqlParameter("@CompanyId", System.Data.SqlDbType.Int)
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
                 {
                     Value = teamMember.CompanyId
                 };
-                SqlParameter TeamMemberId = new SqlParameter("@TeamMemberId", System.Data.SqlDbType.Int)
+                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
                 {
                     Value = teamMember.TeamMemberId
                 };
 
-                command.Parameters.AddRange(new object[] { FirstName, LastName, Title, InviteLink, Mail, CompanyId, TeamMemberId });
+                command.Parameters.AddRange(new object[] { FirstName, LastName, Title, CompanyId, TeamMemberId });
                 var reader = command.ExecuteReader();
                 if (reader.Read())
                 {
@@ -154,7 +142,6 @@ namespace CM.WeeklyTeamReport.Domain
             return null;
         }
 
-
         private static TeamMember MapTeamMember(SqlDataReader reader)
         {
             return new TeamMember()
@@ -162,29 +149,37 @@ namespace CM.WeeklyTeamReport.Domain
                 FirstName = reader["FirstName"].ToString(),
                 LastName = reader["LastName"].ToString(),
                 Title = reader["Title"].ToString(),
-                InviteLink = reader["InviteLink"].ToString(),
                 Mail = reader["Mail"].ToString(),
+                Subject = reader["Subject"].ToString(),
                 TeamMemberId = (int)reader["TeamMemberId"],
-                CompanyId = (int)reader["CompanyId"],
-                ReportsList = new List<WeeklyReport>(),
-                ReportsTo = new List<TeamMember>(),
-                ReportsFrom = new List<TeamMember>(),
+                CompanyId = (int)reader["CompanyId"]
             };
         }
 
         public List<TeamMember> ReadAll()
         {
-            throw new NotImplementedException();
+            List<TeamMember> teamMembers = new();
+            using (var connection = GetSqlConnection())
+            {
+                var command = new SqlCommand("SELECT * FROM TeamMembers", connection);
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var teamMember = MapTeamMember(reader);
+                    teamMembers.Add(teamMember);
+                }
+                return teamMembers;
+            }
         }
 
         public List<TeamMember> ReadAllById(int companyId)
         {
-            List<TeamMember> teamMembers = new List<TeamMember>();
+            List<TeamMember> teamMembers = new();
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("SELECT * FROM TeamMembers WHERE CompanyId=@CompanyId", connection);
 
-                SqlParameter CompanyId = new SqlParameter("@CompanyId", System.Data.SqlDbType.Int)
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
                 {
                     Value = companyId
                 };
@@ -197,6 +192,28 @@ namespace CM.WeeklyTeamReport.Domain
                     teamMembers.Add(teamMember);
                 }
                 return teamMembers;
+            }
+        }
+
+        public TeamMember ReadMemberBySub(string subject)
+        {
+            TeamMember teamMember = new();
+            using (var connection = GetSqlConnection())
+            {
+                var command = new SqlCommand("SELECT * FROM TeamMembers WHERE Subject=@Subject", connection);
+
+                SqlParameter Subject = new("@Subject", SqlDbType.NVarChar, 600)
+                {
+                    Value = subject
+                };
+
+                command.Parameters.Add(Subject);
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    teamMember = MapTeamMember(reader);
+                }
+                return teamMember;
             }
         }
     }
