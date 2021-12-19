@@ -5,7 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace CM.WeeklyTeamReport.WebApp
 {
@@ -18,6 +20,7 @@ namespace CM.WeeklyTeamReport.WebApp
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -35,6 +38,19 @@ namespace CM.WeeklyTeamReport.WebApp
                     Version = "v1",
                     Description = "ASP.NET Core Web API"
                 });
+            });
+
+            var _aspnetCorsFromOut = Environment.GetEnvironmentVariable("ASPNET_CORS")?.Split(",") != null ? Environment.GetEnvironmentVariable("ASPNET_CORS")?.Split(",") : new string[] { };
+            var _aspnetCorsDefault = new string[] { "https://weekly-report-01.digitalocean.ankocorp.com", "https://localhost:3000", "http://localhost:3000" };
+            var corsDomains = _aspnetCorsDefault.Concat(_aspnetCorsFromOut).ToArray();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins(corsDomains).AllowAnyHeader().AllowAnyMethod();
+                                  });
             });
         }
 
@@ -54,6 +70,8 @@ namespace CM.WeeklyTeamReport.WebApp
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 
