@@ -72,7 +72,8 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             var result = teamMemberRepository.ReadMemberBySub(subject);
             if (result == null)
             {
-                return new NotFoundObjectResult($"TeamMember {subject} Not Found");
+                //return new NotFoundObjectResult($"TeamMember {subject} Not Found");
+                return new NoContentResult();
             }
             return new OkObjectResult(result);
         }
