@@ -34,7 +34,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
 
         [ExcludeFromCodeCoverage]
         [HttpGet]
-        public ActionResult<List<WeeklyReport>> ReadAll(string teamMemberId)
+        public ActionResult<List<WeeklyReport>> ReadAllByMemberId([FromRoute] string teamMemberId)
         {
             if (!Regex.IsMatch(teamMemberId, @"^\d+$"))
             {
@@ -51,12 +51,8 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
 
         [Route("{weeklyReportId}")]
         [HttpGet]
-        public ActionResult<WeeklyReport> Read([FromRoute] string companyId, [FromRoute] string teamMemberId, [FromRoute] string weeklyReportId)
+        public ActionResult<WeeklyReport> Read([FromRoute] string teamMemberId, [FromRoute] string weeklyReportId)
         {
-            if (!Regex.IsMatch(companyId, @"^\d+$"))
-            {
-                return new BadRequestObjectResult("CompanyId should be positive integer.");
-            }
             if (!Regex.IsMatch(teamMemberId, @"^\d+$"))
             {
                 return new BadRequestObjectResult("TeamMemberId should be positive integer.");
@@ -74,7 +70,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<WeeklyReport> Create([FromBody] WeeklyReport weeklyReport, [FromRoute] string companyId)
+        public ActionResult<WeeklyReport> Create([FromRoute] string companyId, [FromBody] WeeklyReport weeklyReport)
         {
             if (weeklyReport == null)
             {
@@ -95,14 +91,10 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             return new OkObjectResult(result);
         }
 
-
+        [Route("{weeklyReportId}")]
         [HttpDelete]
-        public ActionResult Delete([FromRoute] string companyId, [FromRoute] string teamMemberId, [FromQuery] string weeklyReportId)
+        public ActionResult Delete([FromRoute] string teamMemberId, [FromRoute] string weeklyReportId)
         {
-            if (!Regex.IsMatch(companyId, @"^\d+$"))
-            {
-                return new BadRequestObjectResult("CompanyId should be positive integer.");
-            }
             if (!Regex.IsMatch(teamMemberId, @"^\d+$"))
             {
                 return new BadRequestObjectResult("TeamMemberId should be positive integer.");
@@ -117,6 +109,23 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             }
             _repository.Delete(Convert.ToInt32(weeklyReportId));
             return new OkObjectResult($"WeeklyReport {weeklyReportId} is deleted.");
+        }
+
+        [Route("to/{dateFrom}/{dateTo}")]
+        [HttpGet]
+        public ActionResult<List<object>> ReportsTo([FromRoute] string teamMemberId, [FromRoute] string dateFrom, [FromRoute] string dateTo)
+        {
+            if (!Regex.IsMatch(teamMemberId, @"^\d+$"))
+            {
+                return new BadRequestObjectResult("TeamMemberId should be positive integer.");
+            }
+            var weeklyReport = new WeeklyReportRepository(_configuration);
+            var result = weeklyReport.ReadAllAllReportsToLeader(Convert.ToInt32(teamMemberId), dateFrom,dateTo);
+            if (result == null)
+            {
+                return new NotFoundObjectResult($"Reports Not Found");
+            }
+            return new OkObjectResult(result);
         }
     }
 }

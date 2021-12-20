@@ -197,7 +197,6 @@ namespace CM.WeeklyTeamReport.Domain
 
         public TeamMember ReadMemberBySub(string subject)
         {
-            TeamMember teamMember = new();
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("SELECT * FROM TeamMembers WHERE Subject=@Subject", connection);
@@ -211,10 +210,10 @@ namespace CM.WeeklyTeamReport.Domain
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    teamMember = MapTeamMember(reader);
+                    return MapTeamMember(reader);
                 }
-                return teamMember;
             }
+            return null;
         }
     }
 }
