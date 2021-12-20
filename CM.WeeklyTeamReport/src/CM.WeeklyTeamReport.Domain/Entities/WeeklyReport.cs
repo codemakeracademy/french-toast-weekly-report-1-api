@@ -17,6 +17,8 @@ namespace CM.WeeklyTeamReport.Domain
         public string WeekLowComment { get; set; }
         public string AnythingElseComment { get; set; }
         public int TeamMemberId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
         public WeeklyReport()
         {
