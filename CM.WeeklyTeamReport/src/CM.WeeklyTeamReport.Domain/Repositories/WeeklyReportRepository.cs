@@ -33,16 +33,16 @@ namespace CM.WeeklyTeamReport.Domain
         {
             using (var connection = GetSqlConnection())
             {
-                var command = new SqlCommand("INSERT INTO WeeklyReports (StartDate,  EndDate, MoraleValueId, StressValueId, WorkloadValueId, MoraleComment, StressComment, WorkloadComment, " +
+                var command = new SqlCommand("INSERT INTO WeeklyReports (DateFrom,  DateTo, MoraleValueId, StressValueId, WorkloadValueId, MoraleComment, StressComment, WorkloadComment, " +
                                              "WeekHighComment, WeekLowComment, AnythingElseComment, TeamMemberId)" +
-                                             "VALUES (@StartDate,  @EndDate, @MoraleValueId, @StressValueId, @WorkloadValueId, @MoraleComment, @StressComment, @WorkloadComment, @WeekHighComment," +
+                                             "VALUES (@DateFrom,  @DateTo, @MoraleValueId, @StressValueId, @WorkloadValueId, @MoraleComment, @StressComment, @WorkloadComment, @WeekHighComment," +
                                              "@WeekLowComment, @AnythingElseComment, @TeamMemberId);" +
                                              "SELECT * FROM WeeklyReports WHERE WeeklyReportId = SCOPE_IDENTITY()", connection);
-                SqlParameter StartDate = new("@StartDate", SqlDbType.Date)
+                SqlParameter DateFrom = new("@DateFrom", SqlDbType.Date)
                 {
                     Value = weeklyReport.DateFrom
                 };
-                SqlParameter EndDate = new("@EndDate", SqlDbType.Date)
+                SqlParameter DateTo = new("@DateTo", SqlDbType.Date)
                 {
                     Value = weeklyReport.DateTo
                 };
@@ -87,7 +87,7 @@ namespace CM.WeeklyTeamReport.Domain
                     Value = weeklyReport.TeamMemberId
                 };
 
-                command.Parameters.AddRange(new object[] { StartDate, EndDate, MoraleValueId, StressValueId, WorkloadValueId, MoraleComment, StressComment, WorkloadComment, WeekHighComment,
+                command.Parameters.AddRange(new object[] { DateFrom, DateTo, MoraleValueId, StressValueId, WorkloadValueId, MoraleComment, StressComment, WorkloadComment, WeekHighComment,
                                                            WeekLowComment, AnythingElseComment, TeamMemberId });
                 var reader = command.ExecuteReader();
                 if (reader.Read())
