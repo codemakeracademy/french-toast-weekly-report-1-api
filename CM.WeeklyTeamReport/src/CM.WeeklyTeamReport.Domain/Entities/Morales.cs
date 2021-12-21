@@ -2,7 +2,7 @@
 {
     public enum Morales
     {
-        none,
+        Nothing,
         VeryLow,
         Low,
         Okay,
