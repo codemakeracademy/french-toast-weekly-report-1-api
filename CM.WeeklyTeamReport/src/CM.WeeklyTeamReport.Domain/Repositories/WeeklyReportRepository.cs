@@ -202,6 +202,27 @@ namespace CM.WeeklyTeamReport.Domain
             return null;
         }
 
+        private static WeeklyReport MapReportsToLeader(SqlDataReader reader)
+        {
+            return new WeeklyReport()
+            {
+                DateFrom = reader["DateFrom"].ToString() == "" ? "null" : DateTime.Parse(reader["DateFrom"].ToString()).ToString("yyyy-MM-dd"),
+                DateTo = reader["DateTo"].ToString() == "" ? "null" : DateTime.Parse(reader["DateTo"].ToString()).ToString("yyyy-MM-dd"),
+                MoraleValueId = reader["MoraleValueId"].ToString() == string.Empty ? 0 : (Morales)(int)reader["MoraleValueId"],
+                StressValueId = reader["StressValueId"].ToString() == string.Empty ? 0 : (Morales)(int)reader["StressValueId"],
+                WorkloadValueId = reader["WorkloadValueId"].ToString() == string.Empty ? 0 : (Morales)(int)reader["WorkloadValueId"],
+                MoraleComment = reader["MoraleComment"].ToString(),
+                StressComment = reader["StressComment"].ToString(),
+                WorkloadComment = reader["WorkloadComment"].ToString(),
+                WeekHighComment = reader["WeekHighComment"].ToString(),
+                WeekLowComment = reader["WeekLowComment"].ToString(),
+                AnythingElseComment = reader["AnythingElseComment"].ToString(),
+                TeamMemberId = reader["TeamMemberId"].ToString() == string.Empty ? 0 : (int)reader["TeamMemberId"],
+                WeeklyReportId = reader["WeeklyReportId"].ToString() == string.Empty ? 0 : (int)reader["WeeklyReportId"],
+                FirstName = reader["FirstName"].ToString(),
+                LastName = reader["LastName"].ToString()
+            };
+        }
 
         private static WeeklyReport MapWeeklyReport(SqlDataReader reader)
         {
@@ -228,23 +249,37 @@ namespace CM.WeeklyTeamReport.Domain
             throw new NotImplementedException();
         }
 
-        public List<WeeklyReport> ReadAllByIdAndReportTo(int teamMemberId)
+        public List<WeeklyReport> ReadAllAllReportsToLeader(int teamMemberToId, string dateFrom, string dateTo)
         {
             List<WeeklyReport> weeklyReports = new();
             using (var connection = GetSqlConnection())
             {
-                var command = new SqlCommand("SELECT * FROM WeeklyReports WHERE TeamMemberId=@TeamMemberId", connection);
+                var command = new SqlCommand("SELECT TM.FirstName, TM.LastName, WR.* " +
+                    "FROM TeamMembers TM JOIN ReportFromTo REP ON TM.TeamMemberId = Rep.TeamMemberFrom " +
+                    "LEFT JOIN WeeklyReports WR ON TM.TeamMemberId = WR.TeamMemberId " +
+                    "WHERE(WR.DateFrom = @DateFrom or WR.DateFrom is null) " +
+                    "AND(WR.DateTo = @DateTo or WR.DateTo is null) " +
+                    "AND Rep.TeamMemberTo = @TeamMemberTo", connection);
 
-                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
+                SqlParameter DateFrom = new("@DateFrom", SqlDbType.NChar)
                 {
-                    Value = teamMemberId
+                    Value = dateFrom
                 };
-
-                command.Parameters.Add(TeamMemberId);
+                SqlParameter DateTo = new("@DateTo", SqlDbType.NChar)
+                {
+                    Value = dateTo
+                };
+                SqlParameter TeamMemberTo = new("@TeamMemberTo", SqlDbType.Int)
+                {
+                    Value = teamMemberToId
+                };
+                command.Parameters.Add(DateFrom);
+                command.Parameters.Add(DateTo);
+                command.Parameters.Add(TeamMemberTo);
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    var weeklyReport = MapWeeklyReport(reader);
+                    var weeklyReport = MapReportsToLeader(reader);
                     weeklyReports.Add(weeklyReport);
                 }
                 return weeklyReports;
