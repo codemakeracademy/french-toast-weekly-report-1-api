@@ -20,7 +20,7 @@ namespace CM.WeeklyTeamReport.Domain
         }
         SqlConnection GetSqlConnection()
         {
-            var connectionString = _configuration.GetConnectionString("Sql");
+            var connectionString = _configuration.GetConnectionString("AntonK");
             var connection = new SqlConnection(connectionString);
             connection.Open();
             return connection;
