@@ -251,14 +251,17 @@ namespace CM.WeeklyTeamReport.Domain
 
         public List<WeeklyReport> ReadAllAllReportsToLeader(int teamMemberToId, string dateFrom, string dateTo)
         {
-            List<WeeklyReport> weeklyReports = new();
+            List<WeeklyReport> existsWeeklyReports = new();
+            TeamMemberRepository memberRepository = new(_configuration);
+            List<TeamMember> reportFromMembers = new();
+            List<WeeklyReport> returnedReports = new();
             using (var connection = GetSqlConnection())
             {
-                var command = new SqlCommand("SELECT TM.FirstName, TM.LastName, WR.* " +
+                var command = new SqlCommand("SELECT WR.* " +
                     "FROM TeamMembers TM JOIN ReportFromTo REP ON TM.TeamMemberId = Rep.TeamMemberFrom " +
                     "LEFT JOIN WeeklyReports WR ON TM.TeamMemberId = WR.TeamMemberId " +
-                    "WHERE(WR.DateFrom = @DateFrom or WR.DateFrom is null) " +
-                    "AND(WR.DateTo = @DateTo or WR.DateTo is null) " +
+                    "WHERE WR.DateFrom = @DateFrom " +
+                    "AND WR.DateTo = @DateTo " +
                     "AND Rep.TeamMemberTo = @TeamMemberTo", connection);
 
                 SqlParameter DateFrom = new("@DateFrom", SqlDbType.NChar)
@@ -279,10 +282,40 @@ namespace CM.WeeklyTeamReport.Domain
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    var weeklyReport = MapReportsToLeader(reader);
-                    weeklyReports.Add(weeklyReport);
+                    var weeklyReport = MapWeeklyReport(reader);
+                    existsWeeklyReports.Add(weeklyReport);
                 }
-                return weeklyReports;
+                //TODO refactoring reader/command
+                reader.Close();
+                var command2 = new SqlCommand("SELECT TM.* " +
+                    "FROM TeamMembers TM JOIN ReportFromTo Rep ON TM.TeamMemberId = Rep.TeamMemberFrom " +
+                    "WHERE Rep.TeamMemberTo =  @TeamMemberTo", connection);
+                SqlParameter TeamMemberTo2 = new("@TeamMemberTo", SqlDbType.Int)
+                {
+                    Value = teamMemberToId
+                };
+                command2.Parameters.Add(TeamMemberTo2);
+                var reader2 = command2.ExecuteReader();
+                while(reader2.Read())
+                {
+                    var member = memberRepository.MapTeamMember(reader2);
+                    reportFromMembers.Add(member);
+                }
+                foreach(var member in reportFromMembers)
+                {
+                    bool flag = true;
+                    foreach(var report in existsWeeklyReports)
+                    {
+                        if (report.TeamMemberId == member.TeamMemberId)
+                        { 
+                            flag = false; returnedReports.Add(report); break; 
+                        }
+                    }
+                    if(flag) returnedReports.Add(new WeeklyReport());
+                    returnedReports[returnedReports.Count - 1].FirstName = member.FirstName;
+                    returnedReports[returnedReports.Count - 1].LastName = member.LastName;
+                }
+                return returnedReports;
             }
         }
 
@@ -291,7 +324,8 @@ namespace CM.WeeklyTeamReport.Domain
             List<WeeklyReport> weeklyReports = new();
             using (var connection = GetSqlConnection())
             {
-                var command = new SqlCommand("SELECT * FROM WeeklyReports WHERE TeamMemberId=@TeamMemberId", connection);
+                var command = new SqlCommand("SELECT * FROM WeeklyReports WHERE TeamMemberId=@TeamMemberId " +
+                    "order by DateFrom desc", connection);
 
                 SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
                 {
