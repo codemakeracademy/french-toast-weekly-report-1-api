@@ -70,13 +70,12 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<WeeklyReport> Create([FromRoute] string companyId, [FromRoute] string teamMemberId, [FromBody] WeeklyReport weeklyReport)
+        public ActionResult<WeeklyReport> Create([FromRoute] string companyId, [FromBody] WeeklyReport weeklyReport)
         {
             if (weeklyReport == null)
             {
                 return new BadRequestObjectResult("WeeklyReport should not be null.");
             }
-            weeklyReport.TeamMemberId = Convert.ToInt32(teamMemberId);
             var result = _repository.Create(weeklyReport);
             return new CreatedResult($"/api/companies/{companyId}/team-members/{result.TeamMemberId}/reports/{result.WeeklyReportId}", result);
         }
