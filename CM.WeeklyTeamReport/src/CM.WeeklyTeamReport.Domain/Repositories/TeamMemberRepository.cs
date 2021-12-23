@@ -109,7 +109,7 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("UPDATE TeamMembers " +
-                                             "SET FirstName = @FirstName, LastName = @LastName, Title = @Title, CompanyId = @CompanyId " +
+                                             "SET FirstName = @FirstName, LastName = @LastName, Title = @Title " +
                                              "WHERE TeamMemberId = @TeamMemberId;" +
                                              "SELECT * FROM TeamMembers WHERE TeamMemberId = @TeamMemberId", connection);
                 SqlParameter FirstName = new("@FirstName", SqlDbType.NVarChar, 20)
@@ -124,16 +124,12 @@ namespace CM.WeeklyTeamReport.Domain
                 {
                     Value = teamMember.Title
                 };
-                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
-                {
-                    Value = teamMember.CompanyId
-                };
                 SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
                 {
                     Value = teamMember.TeamMemberId
                 };
 
-                command.Parameters.AddRange(new object[] { FirstName, LastName, Title, CompanyId, TeamMemberId });
+                command.Parameters.AddRange(new object[] { FirstName, LastName, Title, TeamMemberId });
                 var reader = command.ExecuteReader();
                 if (reader.Read())
                 {
