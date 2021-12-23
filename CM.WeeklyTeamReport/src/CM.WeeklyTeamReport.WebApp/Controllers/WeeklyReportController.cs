@@ -113,14 +113,16 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
 
         [Route("to/{dateFrom}/{dateTo}")]
         [HttpGet]
-        public ActionResult<List<object>> ReportsTo([FromRoute] string teamMemberId, [FromRoute] string dateFrom, [FromRoute] string dateTo)
+        public ActionResult<List<object>> GetWeeklyReports ([FromRoute] string companyId, 
+            [FromRoute] string teamMemberId, [FromRoute] string dateFrom, [FromRoute] string dateTo)
         {
-            if (!Regex.IsMatch(teamMemberId, @"^\d+$"))
+            if (!Regex.IsMatch(companyId, @"^\d+$"))
             {
                 return new BadRequestObjectResult("TeamMemberId should be positive integer.");
             }
             var weeklyReport = new WeeklyReportRepository(_configuration);
-            var result = weeklyReport.ReadAllAllReportsToLeader(Convert.ToInt32(teamMemberId), dateFrom,dateTo);
+            var result = weeklyReport.GetWeeklyReports(Convert.ToInt32(companyId),
+                Convert.ToInt32(teamMemberId), dateFrom, dateTo);
             if (result == null)
             {
                 return new NotFoundObjectResult($"Reports Not Found");

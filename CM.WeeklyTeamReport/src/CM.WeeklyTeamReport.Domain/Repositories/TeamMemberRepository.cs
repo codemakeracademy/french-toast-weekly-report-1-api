@@ -232,11 +232,11 @@ namespace CM.WeeklyTeamReport.Domain
                 };
                 SqlParameter FirstDate = new("@FirstDate", SqlDbType.NVarChar, 8)
                 {
-                    Value = firstDate
+                    Value = firstDate.Replace("-","")
                 };
                 SqlParameter LastDate = new("@LastDate", SqlDbType.NVarChar, 8)
                 {
-                    Value = lastDate
+                    Value = lastDate.Replace("-", "")
                 };
 
                 command.Parameters.AddRange(new object[] { CompanyId, TeamMemberId, FirstDate, LastDate });
