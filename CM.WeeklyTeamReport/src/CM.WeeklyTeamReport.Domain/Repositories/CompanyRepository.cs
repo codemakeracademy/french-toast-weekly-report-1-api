@@ -91,7 +91,7 @@ namespace CM.WeeklyTeamReport.Domain
             using (var connection = GetSqlConnection())
             {
                 var command = new SqlCommand("UPDATE Companies " +
-                                             "SET CompanyName = @CompanyName, JoinDate = @JoinDate " +
+                                             "SET CompanyName = @CompanyName " +
                                              "WHERE CompanyId = @CompanyId;" +
                                               "SELECT * FROM Companies WHERE CompanyId = @CompanyId", connection);
                 SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
@@ -102,14 +102,9 @@ namespace CM.WeeklyTeamReport.Domain
                 {
                     Value = company.CompanyName
                 };
-                SqlParameter JoinDate = new("@JoinDate", SqlDbType.Date)
-                {
-                    Value = company.JoinDate
-                };
 
                 command.Parameters.Add(CompanyId);
                 command.Parameters.Add(CompanyName);
-                command.Parameters.Add(JoinDate);
                 var reader = command.ExecuteReader();
                 if (reader.Read())
                 {
