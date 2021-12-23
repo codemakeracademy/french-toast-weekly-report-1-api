@@ -143,7 +143,7 @@ namespace CM.WeeklyTeamReport.Domain
             return null;
         }
 
-        private static TeamMember MapTeamMember(SqlDataReader reader)
+        public TeamMember MapTeamMember(SqlDataReader reader)
         {
             return new TeamMember()
             {
