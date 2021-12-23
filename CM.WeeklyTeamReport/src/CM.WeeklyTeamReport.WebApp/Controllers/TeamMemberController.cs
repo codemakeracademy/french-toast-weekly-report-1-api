@@ -72,7 +72,6 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             var result = teamMemberRepository.ReadMemberBySub(subject);
             if (result == null)
             {
-                //return new NotFoundObjectResult($"TeamMember {subject} Not Found");
                 return new NoContentResult();
             }
             return new OkObjectResult(result);
@@ -139,5 +138,36 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             _repository.Delete(Convert.ToInt32(teamMemberId));
             return new OkObjectResult($"TeamMember {teamMemberId} is deleted.");
         }
+
+        [Route("/api/companies/{companyId}/team-members/reports")]
+        [HttpGet]
+        public ActionResult<List<ReportHistory>> ReadReportHistory([FromRoute] int companyId, [FromQuery] string dateFrom, [FromQuery] string dateTo)
+        {
+            if (!Regex.IsMatch(companyId.ToString(), @"^\d+$"))
+            {
+                return new BadRequestObjectResult("CompanyId should be positive integer.");
+            }
+            var teamMemberRepository = new TeamMemberRepository(_configuration);
+            List<TeamMember> teamMembers = teamMemberRepository.ReadAllById(companyId);
+            List<ReportHistory> result = new();
+            foreach (TeamMember teamMember in teamMembers)
+            {
+                ReportHistory temp = new();
+                temp.TeamMemberName = teamMember.FirstName + " " + teamMember.LastName;
+                temp.TeamMemberReports = teamMemberRepository.ReadReportHistory(companyId, teamMember.TeamMemberId, dateFrom, dateTo);
+                result.Add(temp);
+            }
+            if (result == null)
+            {
+                return new NotFoundObjectResult($"Reports Not Found");
+            }
+            return new OkObjectResult(result);
+        }
+    }
+
+    public class ReportHistory
+    {
+        public string TeamMemberName { get; set; }
+        public List<int[]> TeamMemberReports { get; set; }
     }
 }
