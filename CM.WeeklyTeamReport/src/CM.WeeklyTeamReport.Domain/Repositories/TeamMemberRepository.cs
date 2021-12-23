@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -142,7 +143,7 @@ namespace CM.WeeklyTeamReport.Domain
             return null;
         }
 
-        private static TeamMember MapTeamMember(SqlDataReader reader)
+        public TeamMember MapTeamMember(SqlDataReader reader)
         {
             return new TeamMember()
             {
@@ -214,6 +215,45 @@ namespace CM.WeeklyTeamReport.Domain
                 }
             }
             return null;
+        }
+
+        public List<int[]> ReadReportHistory(int companyId, int teamMemberId, string firstDate, string lastDate)
+        {
+            using (var connection = GetSqlConnection())
+            {
+                List<int[]> result = new List<int[]>();
+                var command = new SqlCommand("SELECT MoraleValueId, StressValueId, WorkloadValueId " +
+                                             "FROM TeamMembers t JOIN Companies c ON t.CompanyId = c.CompanyId JOIN WeeklyReports w ON t.TeamMemberId = w.TeamMemberId " +
+                                             "WHERE t.CompanyId = @CompanyId AND t.TeamMemberId = @TeamMemberId AND DateFrom BETWEEN @FirstDate AND @LastDate " +
+                                             "ORDER BY DateFrom;", connection);
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
+                {
+                    Value = companyId
+                };
+                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
+                {
+                    Value = teamMemberId
+                };
+                SqlParameter FirstDate = new("@FirstDate", SqlDbType.NVarChar, 8)
+                {
+                    Value = firstDate
+                };
+                SqlParameter LastDate = new("@LastDate", SqlDbType.NVarChar, 8)
+                {
+                    Value = lastDate
+                };
+
+                command.Parameters.AddRange(new object[] { CompanyId, TeamMemberId, FirstDate, LastDate });
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var MoraleValueId = Convert.ToInt32(reader["MoraleValueId"].ToString());
+                    var StressValueId = Convert.ToInt32(reader["StressValueId"].ToString());
+                    var WorkloadValueId = Convert.ToInt32(reader["WorkloadValueId"].ToString());
+                    result.Add(new int[] { MoraleValueId, StressValueId, WorkloadValueId });
+                }
+                return result;
+            }
         }
     }
 }
