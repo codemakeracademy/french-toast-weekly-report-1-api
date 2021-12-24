@@ -12,11 +12,11 @@ namespace CM.WeeklyTeamReport.Domain.Tests
             {
                 CompanyId = 1,
                 CompanyName = "Company Name",
-                JoinDate = DateTime.Parse("2021-12-12")
+                JoinDate = "2021-12-12"
             };
             Assert.NotNull(company);
             Assert.Equal("Company Name", company.CompanyName);
-            Assert.Equal(DateTime.Parse("2021-12-12"), company.JoinDate);
+            Assert.Equal("2021-12-12", company.JoinDate);
             Assert.Equal(1, company.CompanyId);
         }
     }

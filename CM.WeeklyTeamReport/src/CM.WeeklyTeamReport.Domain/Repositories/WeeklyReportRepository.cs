@@ -7,10 +7,15 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CM.WeeklyTeamReport.Domain
 {
-    [ExcludeFromCodeCoverage]
-    public class WeeklyReportRepository : IRepository<WeeklyReport>
+    public interface IWeeklyReportRepository<TEntity> : IRepository<WeeklyReport>
     {
-        private readonly IConfiguration _configuration;
+        public List<TEntity> GetWeeklyReports(int companyId, int teamMemberId, string dateFrom, string dateTo);
+        public List<TEntity> ReadAllById(int teamMemberId);
+    }
+    [ExcludeFromCodeCoverage]
+    public class WeeklyReportRepository : IWeeklyReportRepository<WeeklyReport>
+    {
+        public IConfiguration _configuration;
         public WeeklyReportRepository(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -201,28 +206,6 @@ namespace CM.WeeklyTeamReport.Domain
                 }
             }
             return null;
-        }
-
-        private static WeeklyReport MapReportsToLeader(SqlDataReader reader)
-        {
-            return new WeeklyReport()
-            {
-                DateFrom = reader["DateFrom"].ToString() == "" ? "null" : DateTime.Parse(reader["DateFrom"].ToString()).ToString("yyyy-MM-dd"),
-                DateTo = reader["DateTo"].ToString() == "" ? "null" : DateTime.Parse(reader["DateTo"].ToString()).ToString("yyyy-MM-dd"),
-                MoraleValueId = reader["MoraleValueId"].ToString() == string.Empty ? 0 : (Morales)(int)reader["MoraleValueId"],
-                StressValueId = reader["StressValueId"].ToString() == string.Empty ? 0 : (Morales)(int)reader["StressValueId"],
-                WorkloadValueId = reader["WorkloadValueId"].ToString() == string.Empty ? 0 : (Morales)(int)reader["WorkloadValueId"],
-                MoraleComment = reader["MoraleComment"].ToString(),
-                StressComment = reader["StressComment"].ToString(),
-                WorkloadComment = reader["WorkloadComment"].ToString(),
-                WeekHighComment = reader["WeekHighComment"].ToString(),
-                WeekLowComment = reader["WeekLowComment"].ToString(),
-                AnythingElseComment = reader["AnythingElseComment"].ToString(),
-                TeamMemberId = reader["TeamMemberId"].ToString() == string.Empty ? 0 : (int)reader["TeamMemberId"],
-                WeeklyReportId = reader["WeeklyReportId"].ToString() == string.Empty ? 0 : (int)reader["WeeklyReportId"],
-                FirstName = reader["FirstName"].ToString(),
-                LastName = reader["LastName"].ToString()
-            };
         }
 
         private static WeeklyReport MapWeeklyReport(SqlDataReader reader)

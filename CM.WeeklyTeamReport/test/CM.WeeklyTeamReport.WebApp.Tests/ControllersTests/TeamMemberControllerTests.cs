@@ -3,6 +3,7 @@ using CM.WeeklyTeamReport.WebApp.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace CM.WeeklyTeamReport.WebApp.Tests
@@ -10,15 +11,98 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
     public class TeamMemberControllerTests
     {
         [Fact]
-        public void ShouldReturnAllTeamMembers()
+        public void ShouldReturnAllTeamMembersFromCompany()
         {
-            /*var teamMemberController = new TeamMemberController();
-            var actionResult = (OkObjectResult)teamMemberController.ReadAll("1").Result;
-            var teamMembers = (List<TeamMember>)actionResult.Value;
-            teamMembers.Should().NotBeNull();
-            teamMembers.Should().HaveCount(3);
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadAllById(1))
+                .Returns(new List<TeamMember>() { new TeamMember()});
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (OkObjectResult)controller.ReadAllById("1").Result;
+            var teamMember = (List<TeamMember>)actionResult.Value;
+            teamMember.Should().NotBeNull();
             actionResult.Should().BeOfType<OkObjectResult>();
-            actionResult.StatusCode.Should().Be(200);*/
+            actionResult.StatusCode.Should().Be(200);
+            fixture.TeamMemberRepository.Verify(x => x.ReadAllById(1), Times.Once);
+        }
+        [Fact]
+        public void ShouldReturnBadRequestObjectResultbyReadingAllMembersFromCompany()
+        {
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadAllById(1))
+                .Returns(new List<TeamMember>() { new TeamMember() });
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (BadRequestObjectResult)controller.ReadAllById("-1").Result;
+            actionResult.Should().BeOfType<BadRequestObjectResult>();
+            actionResult.StatusCode.Should().Be(400);
+            fixture.TeamMemberRepository.Verify(x => x.ReadAllById(1), Times.Never);
+        }
+        [Fact]
+        public void ShouldReturnAllMemebrs()
+        {
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadAll())
+                .Returns(new List<TeamMember>() { new TeamMember() });
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (OkObjectResult)controller.ReadAll().Result;
+            actionResult.Should().BeOfType<OkObjectResult>();
+            actionResult.StatusCode.Should().Be(200);
+            fixture.TeamMemberRepository.Verify(x => x.ReadAll(), Times.Once);
+        }
+        [Fact]
+        public void ShouldReturnNotFoundObjectResultByReadingAllMemebrs()
+        {
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadAll())
+                .Returns(new List<TeamMember>());
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (NotFoundObjectResult)controller.ReadAll().Result;
+            actionResult.Should().BeOfType<NotFoundObjectResult>();
+            actionResult.StatusCode.Should().Be(404);
+            fixture.TeamMemberRepository.Verify(x => x.ReadAll(), Times.Once);
+            
+        }
+        [Fact]
+        public void ShouldReturnMemebrBySubject()
+        {
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadMemberBySub("his sub"))
+                .Returns(new TeamMember());
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (OkObjectResult)controller.ReadMemberBySub("his sub").Result;
+            actionResult.Should().BeOfType<OkObjectResult>();
+            actionResult.StatusCode.Should().Be(200);
+            fixture.TeamMemberRepository.Verify(x => x.ReadMemberBySub("his sub"), Times.Once);
+        }
+        [Fact]
+        public void ShouldReturnNoContentResultBySubject()
+        {
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadMemberBySub("his sub"))
+                .Returns((TeamMember)null);
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (NoContentResult)controller.ReadMemberBySub("his sub").Result;
+            actionResult.Should().BeOfType<NoContentResult>();
+            actionResult.StatusCode.Should().Be(204);
+            fixture.TeamMemberRepository.Verify(x => x.ReadMemberBySub("his sub"), Times.Once);
+        }
+        [Fact]
+        public void ShouldReturnNoContentResultByReadingAllMembersFromCompany()
+        {
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadAllById(1))
+                .Returns(new List<TeamMember>());
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (NoContentResult)controller.ReadAllById("1").Result;
+            actionResult.Should().BeOfType<NoContentResult>();
+            actionResult.StatusCode.Should().Be(204);
+            fixture.TeamMemberRepository.Verify(x => x.ReadAllById(1), Times.Once);
         }
 
         [Fact]
@@ -200,15 +284,31 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
             actionResult.StatusCode.Should().Be(400);
             fixture.TeamMemberRepository.Verify(x => x.Delete(48), Times.Never);
         }
+
+        [Fact]
+        public void ShouldBeAbleToCreateReportHistory()
+        {
+            List<int[]> reportData = new()
+            {
+                new int[] { 1, 2, 3 },
+                new int[] { 5, 4, 2 }
+            };
+            ReportHistory reportHistory = new()
+            {
+                TeamMemberName = "Ilya Kra",
+                TeamMemberReports = reportData
+            };
+            reportHistory.Should().NotBeNull();
+        }
     }
 
     public class TeamMemberControllerFixture
     {
-        public Mock<IRepository<TeamMember>> TeamMemberRepository { get; set; }
+        public Mock<ITeamMemberRepository<TeamMember>> TeamMemberRepository { get; set; }
 
         public TeamMemberControllerFixture()
         {
-            TeamMemberRepository = new Mock<IRepository<TeamMember>>();
+            TeamMemberRepository = new Mock<ITeamMemberRepository<TeamMember>>();
         }
 
         public TeamMemberController GetTeamMemberController()
