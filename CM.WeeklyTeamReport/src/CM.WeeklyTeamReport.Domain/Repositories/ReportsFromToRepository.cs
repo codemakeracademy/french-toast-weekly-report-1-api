@@ -57,12 +57,15 @@ namespace CM.WeeklyTeamReport.Domain
             throw new NotImplementedException();
         }
 
-        public List<ReportsFromTo> ReadReportTo(int idMemberTo)
+        public List<string[]> ReadReportTo(int idMemberTo)
         {
             using (var connection = GetSqlConnection())
             {
-                List<ReportsFromTo> membersWhichReportTo = new();
-                var command = new SqlCommand("SELECT * FROM ReportFromTo WHERE TeamMemberTo = @TeamMemberTo", connection);
+                List<string[]> membersWhichReportTo = new();
+                var command = new SqlCommand("SELECT Rep.TeamMemberFrom, TM.FirstName, TM.LastName " +
+                    "FROM ReportFromTo Rep JOIN TeamMembers TM " +
+                    "on Rep.TeamMemberFrom = TM.TeamMemberId " +
+                    "WHERE TeamMemberTo = @TeamMemberTo", connection);
                 SqlParameter TeamMemberTo = new("@TeamMemberTo", SqlDbType.Int)
                 {
                     Value = idMemberTo
@@ -72,17 +75,23 @@ namespace CM.WeeklyTeamReport.Domain
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    membersWhichReportTo.Add(MapReportFromTo(reader));
+                    var memberId = reader["TeamMemberFrom"].ToString();
+                    var firstName = reader["FirstName"].ToString();
+                    var lastName = reader["LastName"].ToString();
+                    membersWhichReportTo.Add(new string[] { memberId, firstName, lastName });
                 }
                 return membersWhichReportTo;
             }
         }
-        public List<ReportsFromTo> ReadReportFrom(int idMemberFrom)
+        public List<string[]> ReadReportFrom(int idMemberFrom)
         {
             using (var connection = GetSqlConnection())
             {
-                List<ReportsFromTo> membersWhichReportTo = new();
-                var command = new SqlCommand("SELECT * FROM ReportFromTo WHERE TeamMemberFrom = @TeamMemberFrom", connection);
+                List<string[]> membersWhichReportTo = new();
+                var command = new SqlCommand("SELECT Rep.TeamMemberTo, TM.FirstName, TM.LastName " +
+                    "FROM ReportFromTo Rep JOIN TeamMembers TM " +
+                    "on Rep.TeamMemberTo = TM.TeamMemberId " +
+                    "WHERE TeamMemberFrom = @TeamMemberFrom", connection);
                 SqlParameter TeamMemberFrom = new("@TeamMemberFrom", SqlDbType.Int)
                 {
                     Value = idMemberFrom
@@ -92,7 +101,10 @@ namespace CM.WeeklyTeamReport.Domain
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    membersWhichReportTo.Add(MapReportFromTo(reader));
+                    var memberId = reader["TeamMemberTo"].ToString();
+                    var firstName = reader["FirstName"].ToString();
+                    var lastName = reader["LastName"].ToString();
+                    membersWhichReportTo.Add(new string[] { memberId,firstName,lastName});
                 }
                 return membersWhichReportTo;
             }
