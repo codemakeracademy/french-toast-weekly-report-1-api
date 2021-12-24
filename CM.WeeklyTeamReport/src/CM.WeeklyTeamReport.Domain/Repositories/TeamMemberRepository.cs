@@ -11,6 +11,7 @@ namespace CM.WeeklyTeamReport.Domain
     {
         public List<TEntity> ReadAllById(int companyId);
         public Dictionary<string, int[]> ReadReportHistory(int companyId, int teamMemberId, string firstDate, string lastDate);
+        public Dictionary<string, int[]> ReadReportHistoryTo(int companyId, int teamMemberId, string firstDate, string lastDate, int teamMemberTo);
         public TEntity ReadMemberBySub(string subject);
     }
     [ExcludeFromCodeCoverage]
