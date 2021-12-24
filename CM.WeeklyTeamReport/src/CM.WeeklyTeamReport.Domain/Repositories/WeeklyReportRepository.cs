@@ -233,7 +233,7 @@ namespace CM.WeeklyTeamReport.Domain
             throw new NotImplementedException();
         }
 
-        
+      
         public List<WeeklyReport> GetWeeklyReports(int companyId, int teamMemberId, string dateFrom, string dateTo)
         {
             List<WeeklyReport> existsWeeklyReports = new();

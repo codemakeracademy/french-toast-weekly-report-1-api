@@ -219,12 +219,12 @@ namespace CM.WeeklyTeamReport.Domain
             return null;
         }
 
-        public List<int[]> ReadReportHistory(int companyId, int teamMemberId, string firstDate, string lastDate)
+        public Dictionary<string, int[]> ReadReportHistory(int companyId, int teamMemberId, string firstDate, string lastDate)
         {
             using (var connection = GetSqlConnection())
             {
-                List<int[]> result = new List<int[]>();
-                var command = new SqlCommand("SELECT MoraleValueId, StressValueId, WorkloadValueId " +
+                Dictionary<string, int[]> result = new();
+                var command = new SqlCommand("SELECT DateFrom, MoraleValueId, StressValueId, WorkloadValueId " +
                                              "FROM TeamMembers t JOIN Companies c ON t.CompanyId = c.CompanyId JOIN WeeklyReports w ON t.TeamMemberId = w.TeamMemberId " +
                                              "WHERE t.CompanyId = @CompanyId AND t.TeamMemberId = @TeamMemberId AND DateFrom BETWEEN @FirstDate AND @LastDate " +
                                              "ORDER BY DateFrom;", connection);
@@ -252,7 +252,50 @@ namespace CM.WeeklyTeamReport.Domain
                     var MoraleValueId = Convert.ToInt32(reader["MoraleValueId"].ToString());
                     var StressValueId = Convert.ToInt32(reader["StressValueId"].ToString());
                     var WorkloadValueId = Convert.ToInt32(reader["WorkloadValueId"].ToString());
-                    result.Add(new int[] { MoraleValueId, StressValueId, WorkloadValueId });
+                    result.Add(Convert.ToDateTime(reader["DateFrom"]).ToString("yyyy-MM-dd"), new int[] { MoraleValueId, StressValueId, WorkloadValueId });
+                }
+                return result;
+            }
+        }
+
+        public Dictionary<string, int[]> ReadReportHistoryTo(int companyId, int teamMemberId, string firstDate, string lastDate, int teamMemberTo)
+        {
+            using (var connection = GetSqlConnection())
+            {
+                Dictionary<string, int[]> result = new();
+                var command = new SqlCommand("SELECT DateFrom, MoraleValueId, StressValueId, WorkloadValueId " +
+                                             "FROM TeamMembers t JOIN Companies c ON t.CompanyId = c.CompanyId JOIN WeeklyReports w ON t.TeamMemberId = w.TeamMemberId JOIN ReportFromTo r ON t.TeamMemberId = r.TeamMemberFrom " +
+                                             "WHERE t.CompanyId = @CompanyId AND t.TeamMemberId = @TeamMemberId AND r.TeamMemberTo = @TeamMemberTo AND DateFrom BETWEEN @FirstDate AND @LastDate " +
+                                             "ORDER BY DateFrom;", connection);
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
+                {
+                    Value = companyId
+                };
+                SqlParameter TeamMemberId = new("@TeamMemberId", SqlDbType.Int)
+                {
+                    Value = teamMemberId
+                };
+                SqlParameter FirstDate = new("@FirstDate", SqlDbType.NVarChar, 8)
+                {
+                    Value = firstDate
+                };
+                SqlParameter LastDate = new("@LastDate", SqlDbType.NVarChar, 8)
+                {
+                    Value = lastDate
+                };
+                SqlParameter TeamMemberTo = new("@TeamMemberTo", SqlDbType.Int)
+                {
+                    Value = teamMemberTo
+                };
+
+                command.Parameters.AddRange(new object[] { CompanyId, TeamMemberId, FirstDate, LastDate, TeamMemberTo });
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var MoraleValueId = Convert.ToInt32(reader["MoraleValueId"].ToString());
+                    var StressValueId = Convert.ToInt32(reader["StressValueId"].ToString());
+                    var WorkloadValueId = Convert.ToInt32(reader["WorkloadValueId"].ToString());
+                    result.Add(Convert.ToDateTime(reader["DateFrom"]).ToString("yyyy-MM-dd"), new int[] { MoraleValueId, StressValueId, WorkloadValueId });
                 }
                 return result;
             }
