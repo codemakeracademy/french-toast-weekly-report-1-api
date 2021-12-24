@@ -250,6 +250,43 @@ namespace CM.WeeklyTeamReport.Domain
             throw new NotImplementedException();
         }
 
+        public List<WeeklyReport> ReadAllHistory(int companyId, string dateFrom, string dateTo)
+        {
+            List<WeeklyReport> weeklyReports = new();
+            using (var connection = GetSqlConnection())
+            {
+                var command = new SqlCommand("SELECT DISTINCT TM.FirstName, TM.LastName, WR.* " +
+                    "FROM TeamMembers TM JOIN ReportFromTo REP ON TM.TeamMemberId = Rep.TeamMemberFrom " +
+                    "LEFT JOIN WeeklyReports WR ON TM.TeamMemberId = WR.TeamMemberId " +
+                    "WHERE(WR.DateFrom = @DateFrom or WR.DateFrom is null) " +
+                    "AND(WR.DateTo = @DateTo or WR.DateTo is null) " +
+                    "AND TM.CompanyId = @CompanyId", connection);
+
+                SqlParameter DateFrom = new("@DateFrom", SqlDbType.NChar)
+                {
+                    Value = dateFrom
+                };
+                SqlParameter DateTo = new("@DateTo", SqlDbType.NChar)
+                {
+                    Value = dateTo
+                };
+                SqlParameter CompanyId = new("@CompanyId", SqlDbType.Int)
+                {
+                    Value = companyId
+                };
+                command.Parameters.Add(DateFrom);
+                command.Parameters.Add(DateTo);
+                command.Parameters.Add(CompanyId);
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var weeklyReport = MapReportsToLeader(reader);
+                    weeklyReports.Add(weeklyReport);
+                }
+                return weeklyReports;
+            }
+        }
+
         public List<WeeklyReport> ReadAllAllReportsToLeader(int teamMemberToId, string dateFrom, string dateTo)
         {
             List<WeeklyReport> weeklyReports = new();

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace CM.WeeklyTeamReport.WebApp.Controllers
 {
@@ -147,14 +148,83 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             {
                 return new BadRequestObjectResult("CompanyId should be positive integer.");
             }
+
             var teamMemberRepository = new TeamMemberRepository(_configuration);
             List<TeamMember> teamMembers = teamMemberRepository.ReadAllById(companyId);
             List<ReportHistory> result = new();
+            Dictionary<string, int[]> tempDBResult;
+            string nineWeeksAgoDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek - (7 * 9) + 1).ToString("yyyy-MM-dd");
+            
             foreach (TeamMember teamMember in teamMembers)
             {
+                tempDBResult = teamMemberRepository.ReadReportHistory(companyId, teamMember.TeamMemberId, dateFrom, dateTo);
+                string mondayDate = nineWeeksAgoDate;
+                List<int[]> tempResult = new();
+                for (int i = 0; i < 10; i++) 
+                {
+                    if (tempDBResult.Keys.Contains(mondayDate))
+                    {
+                        tempResult.Add(tempDBResult[mondayDate]);
+                    }
+                    else
+                    {
+                        tempResult.Add(new int[] { 0, 0, 0 });
+                    }
+                    mondayDate = DateTime.Parse(mondayDate).AddDays(7).ToString("yyyy-MM-dd");
+                    
+                }       
+                                               
                 ReportHistory temp = new();
                 temp.TeamMemberName = teamMember.FirstName + " " + teamMember.LastName;
-                temp.TeamMemberReports = teamMemberRepository.ReadReportHistory(companyId, teamMember.TeamMemberId, dateFrom, dateTo);
+                temp.TeamMemberReports = tempResult;
+                result.Add(temp);
+            }
+            if (result == null)
+            {
+                return new NotFoundObjectResult($"Reports Not Found");
+            }
+            return new OkObjectResult(result);
+        }
+
+
+        [Route("/api/companies/{companyId}/team-members/reports/immediate")]
+        [HttpGet]
+        public ActionResult<List<ReportHistory>> ReadReportHistory([FromRoute] int companyId, [FromQuery] string dateFrom, [FromQuery] string dateTo, [FromQuery] int to)
+        {
+            if (!Regex.IsMatch(companyId.ToString(), @"^\d+$"))
+            {
+                return new BadRequestObjectResult("CompanyId should be positive integer.");
+            }
+
+            var teamMemberRepository = new TeamMemberRepository(_configuration);
+            List<TeamMember> teamMembers = teamMemberRepository.ReadAllById(companyId);
+            List<ReportHistory> result = new();
+            Dictionary<string, int[]> tempDBResult;
+            string nineWeeksAgoDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek - (7 * 9) + 1).ToString("yyyy-MM-dd");
+
+            foreach (TeamMember teamMember in teamMembers)
+            {
+                tempDBResult = teamMemberRepository.ReadReportHistoryTo(companyId, teamMember.TeamMemberId, dateFrom, dateTo, to);
+                if (tempDBResult.Count == 0) continue;
+                string mondayDate = nineWeeksAgoDate;
+                List<int[]> tempResult = new();
+                for (int i = 0; i < 10; i++)
+                {
+                    if (tempDBResult.Keys.Contains(mondayDate))
+                    {
+                        tempResult.Add(tempDBResult[mondayDate]);
+                    }
+                    else
+                    {
+                        tempResult.Add(new int[] { 0, 0, 0 });
+                    }
+                    mondayDate = DateTime.Parse(mondayDate).AddDays(7).ToString("yyyy-MM-dd");
+
+                }
+
+                ReportHistory temp = new();
+                temp.TeamMemberName = teamMember.FirstName + " " + teamMember.LastName;
+                temp.TeamMemberReports = tempResult;
                 result.Add(temp);
             }
             if (result == null)
