@@ -10,7 +10,7 @@ namespace CM.WeeklyTeamReport.Domain
     public interface ITeamMemberRepository<TEntity> : IRepository<TeamMember>
     {
         public List<TEntity> ReadAllById(int companyId);
-        public List<int[]> ReadReportHistory(int companyId, int teamMemberId, string firstDate, string lastDate);
+        public Dictionary<string, int[]> ReadReportHistory(int companyId, int teamMemberId, string firstDate, string lastDate);
         public TEntity ReadMemberBySub(string subject);
     }
     [ExcludeFromCodeCoverage]

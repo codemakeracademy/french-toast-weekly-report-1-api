@@ -131,7 +131,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             }
             return new OkObjectResult(result);
         }
-
+        /*
         [Route("/api/companies/{companyId}/team-members/reports/history")]
         [HttpGet]
         public ActionResult<List<object>> ReadAllReportsHistory([FromRoute] string companyId, [FromQuery] string dateFrom, [FromQuery] string dateTo)
@@ -147,6 +147,6 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
                 return new NotFoundObjectResult($"Reports Not Found");
             }
             return new OkObjectResult(result);
-        }
+        }*/
     }
 }
