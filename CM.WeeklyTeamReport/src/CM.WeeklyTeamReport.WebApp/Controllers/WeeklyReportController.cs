@@ -129,5 +129,22 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             }
             return new OkObjectResult(result);
         }
+
+        [Route("/api/companies/{companyId}/team-members/reports/history")]
+        [HttpGet]
+        public ActionResult<List<object>> ReadAllReportsHistory([FromRoute] string companyId, [FromQuery] string dateFrom, [FromQuery] string dateTo)
+        {
+            if (!Regex.IsMatch(companyId, @"^\d+$"))
+            {
+                return new BadRequestObjectResult("CompanyId should be positive integer.");
+            }
+            var weeklyReport = new WeeklyReportRepository(_configuration);
+            var result = weeklyReport.ReadAllHistory(Convert.ToInt32(companyId), dateFrom, dateTo);
+            if (result == null)
+            {
+                return new NotFoundObjectResult($"Reports Not Found");
+            }
+            return new OkObjectResult(result);
+        }
     }
 }
