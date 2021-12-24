@@ -146,16 +146,14 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             {
                 return new BadRequestObjectResult("CompanyId should be positive integer.");
             }
-
-            var teamMemberRepository = new TeamMemberRepository(_configuration);
-            List<TeamMember> teamMembers = teamMemberRepository.ReadAllById(companyId);
+            var teamMembers = _repository.ReadAllById(companyId);
             List<ReportHistory> result = new();
             Dictionary<string, int[]> tempDBResult;
             string nineWeeksAgoDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek - (7 * 9) + 1).ToString("yyyy-MM-dd");
             
             foreach (TeamMember teamMember in teamMembers)
             {
-                tempDBResult = teamMemberRepository.ReadReportHistory(companyId, teamMember.TeamMemberId, dateFrom, dateTo);
+                tempDBResult = _repository.ReadReportHistory(companyId, teamMember.TeamMemberId, dateFrom, dateTo);
                 string mondayDate = nineWeeksAgoDate;
                 List<int[]> tempResult = new();
                 for (int i = 0; i < 10; i++) 
@@ -194,15 +192,14 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
                 return new BadRequestObjectResult("CompanyId should be positive integer.");
             }
 
-            var teamMemberRepository = new TeamMemberRepository(_configuration);
-            List<TeamMember> teamMembers = teamMemberRepository.ReadAllById(companyId);
+            var teamMembers = _repository.ReadAllById(companyId);
             List<ReportHistory> result = new();
             Dictionary<string, int[]> tempDBResult;
             string nineWeeksAgoDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek - (7 * 9) + 1).ToString("yyyy-MM-dd");
 
             foreach (TeamMember teamMember in teamMembers)
             {
-                tempDBResult = teamMemberRepository.ReadReportHistoryTo(companyId, teamMember.TeamMemberId, dateFrom, dateTo, to);
+                tempDBResult = _repository.ReadReportHistoryTo(companyId, teamMember.TeamMemberId, dateFrom, dateTo, to);
                 if (tempDBResult.Count == 0) continue;
                 string mondayDate = nineWeeksAgoDate;
                 List<int[]> tempResult = new();
