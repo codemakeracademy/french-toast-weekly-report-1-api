@@ -27,8 +27,8 @@ namespace CM.WeeklyTeamReport.WebApp
         {
             services.AddControllers().AddNewtonsoftJson();
             services.AddTransient<IRepository<Company>, CompanyRepository>();
-            services.AddTransient<IRepository<TeamMember>, TeamMemberRepository>();
-            services.AddTransient<IRepository<WeeklyReport>, WeeklyReportRepository>();
+            services.AddTransient<ITeamMemberRepository<TeamMember>, TeamMemberRepository>();
+            services.AddTransient<IWeeklyReportRepository<WeeklyReport>, WeeklyReportRepository>();
             services.AddTransient<IRepository<ReportsFromTo>, ReportsFromToRepository>();
             services.AddSwaggerGen(c =>
             {

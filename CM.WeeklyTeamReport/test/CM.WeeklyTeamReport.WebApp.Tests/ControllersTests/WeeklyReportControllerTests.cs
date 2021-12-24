@@ -11,61 +11,118 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
     public class WeeklyReportControllerTests
     {
         [Fact]
-        public void ShouldReturnAllWeeklyReports()
-        {
-            /*var weeklyReportController = new WeeklyReportController();
-            var actionResult = (OkObjectResult)weeklyReportController.ReadAll("1").Result;
-            var weeklyReports = (List<WeeklyReport>)actionResult.Value;
-            weeklyReports.Should().NotBeNull();
-            weeklyReports.Should().HaveCount(3);
-            actionResult.Should().BeOfType<OkObjectResult>();
-            actionResult.StatusCode.Should().Be(200);
-            */
-        }
-
-        [Fact]
-        public void ShouldReturnWeeklyReportById()
+        public void ShouldReturnAllWeeklyReportsByMemberId()
         {
             var fixture = new WeeklyReportControllerFixture();
             fixture.WeeklyReportRepository
                 .Setup(x => x.Read(1))
                 .Returns(new WeeklyReport());
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (OkObjectResult)controller.Read("48", "1", "1").Result;
+            var actionResult = (OkObjectResult)controller.Read("48", "1").Result;
             var weeklyReport = (WeeklyReport)actionResult.Value;
             weeklyReport.Should().NotBeNull();
             actionResult.Should().BeOfType<OkObjectResult>();
             actionResult.StatusCode.Should().Be(200);
             fixture.WeeklyReportRepository.Verify(x => x.Read(1), Times.Once);
+
         }
 
         [Fact]
-        public void ShouldReturnNoWeeklyReportById()
+        public void ShouldReturnBadRequestOnReadAllReportSendToMemberWithIncorrectMemberId()
+        {
+            var fixture = new WeeklyReportControllerFixture();
+            fixture.WeeklyReportRepository
+                .Setup(x => x.ReadAllById(1))
+                .Returns(new List<WeeklyReport>());
+            var controller = fixture.GetWeeklyReportController();
+            var actionResult = (BadRequestObjectResult)controller.ReadAllByMemberId("-1").Result;
+            actionResult.Should().BeOfType<BadRequestObjectResult>();
+            actionResult.StatusCode.Should().Be(400);
+            fixture.WeeklyReportRepository.Verify(x => x.ReadAllById(1), Times.Never);
+        }
+        [Fact]
+        public void ShouldReturnNoContentResultByReadingAllReportsToMember()
+        {
+            var fixture = new WeeklyReportControllerFixture();
+            fixture.WeeklyReportRepository
+                .Setup(x => x.ReadAllById(1))
+                .Returns(new List<WeeklyReport>());
+            var controller = fixture.GetWeeklyReportController();
+            var actionResult = (NoContentResult)controller.ReadAllByMemberId("1").Result;
+            actionResult.Should().BeOfType<NoContentResult>();
+            actionResult.StatusCode.Should().Be(204);
+            fixture.WeeklyReportRepository.Verify(x => x.ReadAllById(1), Times.Once);
+        }
+        [Fact]
+        public void ShouldReturnOkObjectResultByReadingAllReportsToMember()
+        {
+            var fixture = new WeeklyReportControllerFixture();
+            fixture.WeeklyReportRepository
+                .Setup(x => x.ReadAllById(1))
+                .Returns(new List<WeeklyReport>() { new WeeklyReport() });
+            var controller = fixture.GetWeeklyReportController();
+            var actionResult = (OkObjectResult)controller.ReadAllByMemberId("1").Result;
+            var weeklyReport = (List<WeeklyReport>)actionResult.Value;
+            actionResult.Should().BeOfType<OkObjectResult>();
+            actionResult.StatusCode.Should().Be(200);
+            fixture.WeeklyReportRepository.Verify(x => x.ReadAllById(1), Times.Once);
+        }
+        [Fact]
+        public void ShouldReturnOkObjectResultByGetWeeklyReports()
+        {
+            var fixture = new WeeklyReportControllerFixture();
+            fixture.WeeklyReportRepository
+                .Setup(x => x.GetWeeklyReports(1,2,"2021-12-20", "2021-12-26"))
+                .Returns(new List<WeeklyReport>() { new WeeklyReport() });
+            var controller = fixture.GetWeeklyReportController();
+            var actionResult = (OkObjectResult)controller.GetWeeklyReports("1", "2", "2021-12-20", "2021-12-26").Result;
+            var weeklyReport = (List<WeeklyReport>)actionResult.Value;
+            actionResult.Should().BeOfType<OkObjectResult>();
+            actionResult.StatusCode.Should().Be(200);
+            fixture.WeeklyReportRepository.Verify(x => x.GetWeeklyReports(1, 2, "2021-12-20", "2021-12-26"), Times.Once);
+        }
+        [Fact]
+        public void ShouldReturnBadRequestByGetWeeklyReports()
+        {
+            var fixture = new WeeklyReportControllerFixture();
+            fixture.WeeklyReportRepository
+                .Setup(x => x.GetWeeklyReports(-1, 2, "2021-12-20", "2021-12-26"))
+                .Returns(new List<WeeklyReport>() { new WeeklyReport() });
+            var controller = fixture.GetWeeklyReportController();
+            var actionResult = (BadRequestObjectResult)controller.GetWeeklyReports("-1", "2", "2021-12-20", "2021-12-26").Result;
+            actionResult.Should().BeOfType<BadRequestObjectResult>();
+            actionResult.StatusCode.Should().Be(400);
+            actionResult = (BadRequestObjectResult)controller.GetWeeklyReports("1", "-2", "2021-12-20", "2021-12-26").Result;
+            actionResult.Should().BeOfType<BadRequestObjectResult>();
+            actionResult.StatusCode.Should().Be(400);
+        }
+        [Fact]
+        public void ShouldReturnNotFoundByGetWeeklyReports()
+        {
+            var fixture = new WeeklyReportControllerFixture();
+            fixture.WeeklyReportRepository
+                .Setup(x => x.GetWeeklyReports(-1, 2, "2021-12-20", "2021-12-26"))
+                .Returns(new List<WeeklyReport>() { new WeeklyReport() });
+            var controller = fixture.GetWeeklyReportController();
+            var actionResult = (NotFoundObjectResult)controller.GetWeeklyReports("1", "60", "2021-12-20", "2021-12-26").Result;
+            actionResult.Should().BeOfType<NotFoundObjectResult>();
+            actionResult.StatusCode.Should().Be(404);
+        }
+
+        [Fact]
+        public void ShouldReturnBadRequestByIncorrectWeeklyReportById()
         {
             var fixture = new WeeklyReportControllerFixture();
             fixture.WeeklyReportRepository
                 .Setup(x => x.Read(48123123))
                 .Returns((WeeklyReport)null);
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (NotFoundObjectResult)controller.Read("48", "1", "48123123").Result;
-            actionResult.Should().BeOfType<NotFoundObjectResult>();
-            actionResult.StatusCode.Should().Be(404);
-            fixture.WeeklyReportRepository.Verify(x => x.Read(48123123), Times.Once);
-        }
-
-
-        [Fact]
-        public void ShouldReturnBadRequestReadWeeklyReportByIncorrectCompanyId()
-        {
-            var fixture = new WeeklyReportControllerFixture();
-            fixture.WeeklyReportRepository
-                .Setup(x => x.Read(1));
-            var controller = fixture.GetWeeklyReportController();
-            var actionResult = (BadRequestObjectResult)controller.Read("-48", "1", "1").Result;
+            var actionResult = (BadRequestObjectResult)controller.Read("1", "-144444").Result;
             actionResult.Should().BeOfType<BadRequestObjectResult>();
             actionResult.StatusCode.Should().Be(400);
-            fixture.WeeklyReportRepository.Verify(x => x.Read(1), Times.Never);
+            fixture.WeeklyReportRepository.Verify(x => x.Read(-144444), Times.Never);
         }
+
 
         [Fact]
         public void ShouldReturnBadRequestReadWeeklyReportByIncorrectTeamMemberId()
@@ -74,20 +131,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
             fixture.WeeklyReportRepository
                 .Setup(x => x.Read(-1));
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (BadRequestObjectResult)controller.Read("48", "-1", "1").Result;
-            actionResult.Should().BeOfType<BadRequestObjectResult>();
-            actionResult.StatusCode.Should().Be(400);
-            fixture.WeeklyReportRepository.Verify(x => x.Read(-1), Times.Never);
-        }
-
-        [Fact]
-        public void ShouldReturnBadRequestReadWeeklyReportByIncorrectWeeklyReportId()
-        {
-            var fixture = new WeeklyReportControllerFixture();
-            fixture.WeeklyReportRepository
-                .Setup(x => x.Read(-1));
-            var controller = fixture.GetWeeklyReportController();
-            var actionResult = (BadRequestObjectResult)controller.Read("48", "1", "-1").Result;
+            var actionResult = (BadRequestObjectResult)controller.Read("-1", "1").Result;
             actionResult.Should().BeOfType<BadRequestObjectResult>();
             actionResult.StatusCode.Should().Be(400);
             fixture.WeeklyReportRepository.Verify(x => x.Read(-1), Times.Never);
@@ -102,12 +146,25 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
                 .Setup(x => x.Create(weeklyReport))
                 .Returns(weeklyReport);
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (CreatedResult)controller.Create(weeklyReport, "48").Result;
+            var actionResult = (CreatedResult)controller.Create("1",weeklyReport).Result;
             weeklyReport = (WeeklyReport)actionResult.Value;
             weeklyReport.Should().NotBeNull();
             actionResult.Should().BeOfType<CreatedResult>();
             actionResult.StatusCode.Should().Be(201);
             fixture.WeeklyReportRepository.Verify(x => x.Create(weeklyReport), Times.Once);
+        }
+
+        [Fact]
+        public void ShouldReturnNotFoundByReadIncorrectWeeklyReport()
+        {
+            var fixture = new WeeklyReportControllerFixture();
+            fixture.WeeklyReportRepository
+                .Setup(x => x.Read(11));
+            var controller = fixture.GetWeeklyReportController();
+            var actionResult = (NotFoundObjectResult)controller.Read("1", "1").Result;
+            actionResult.Should().BeOfType<NotFoundObjectResult>();
+            actionResult.StatusCode.Should().Be(404);
+            fixture.WeeklyReportRepository.Verify(x => x.Read(11), Times.Never);
         }
 
         [Fact]
@@ -119,7 +176,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
                 .Setup(x => x.Create(weeklyReport))
                 .Returns(weeklyReport);
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (BadRequestObjectResult)controller.Create(weeklyReport, "48").Result;
+            var actionResult = (BadRequestObjectResult)controller.Create("1",weeklyReport).Result;
             weeklyReport.Should().BeNull();
             actionResult.Should().BeOfType<BadRequestObjectResult>();
             actionResult.StatusCode.Should().Be(400);
@@ -169,7 +226,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
                 .Setup(x => x.Read(1))
                 .Returns(new WeeklyReport());
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (OkObjectResult)controller.Delete("48", "1", "1");
+            var actionResult = (OkObjectResult)controller.Delete("48", "1");
             actionResult.Should().BeOfType<OkObjectResult>();
             actionResult.StatusCode.Should().Be(200);
             fixture.WeeklyReportRepository.Verify(x => x.Delete(1), Times.Once);
@@ -185,7 +242,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
                 .Setup(x => x.Read(45646546))
                 .Returns((WeeklyReport)null);
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (NotFoundObjectResult)controller.Delete("48", "45646546", "1");
+            var actionResult = (NotFoundObjectResult)controller.Delete("48", "1");
             actionResult.Should().BeOfType<NotFoundObjectResult>();
             actionResult.StatusCode.Should().Be(404);
             fixture.WeeklyReportRepository.Verify(x => x.Delete(48), Times.Never);
@@ -198,7 +255,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
             fixture.WeeklyReportRepository
                 .Setup(x => x.Delete(48));
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (BadRequestObjectResult)controller.Delete("-48", "1", "1");
+            var actionResult = (BadRequestObjectResult)controller.Delete("-48", "1");
             actionResult.Should().BeOfType<BadRequestObjectResult>();
             actionResult.StatusCode.Should().Be(400);
             fixture.WeeklyReportRepository.Verify(x => x.Delete(48), Times.Never);
@@ -211,7 +268,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
             fixture.WeeklyReportRepository
                 .Setup(x => x.Delete(-48));
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (BadRequestObjectResult)controller.Delete("48", "-1", "1");
+            var actionResult = (BadRequestObjectResult)controller.Delete("48", "-1");
             actionResult.Should().BeOfType<BadRequestObjectResult>();
             actionResult.StatusCode.Should().Be(400);
             fixture.WeeklyReportRepository.Verify(x => x.Delete(48), Times.Never);
@@ -224,9 +281,9 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
             fixture.WeeklyReportRepository
                 .Setup(x => x.Delete(-48));
             var controller = fixture.GetWeeklyReportController();
-            var actionResult = (BadRequestObjectResult)controller.Delete("48", "1", "-1");
-            actionResult.Should().BeOfType<BadRequestObjectResult>();
-            actionResult.StatusCode.Should().Be(400);
+            var actionResult = (NotFoundObjectResult)controller.Delete("48", "1");
+            actionResult.Should().BeOfType<NotFoundObjectResult>();
+            actionResult.StatusCode.Should().Be(404);
             fixture.WeeklyReportRepository.Verify(x => x.Delete(48), Times.Never);
         }
 
@@ -235,11 +292,11 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
 
     public class WeeklyReportControllerFixture
     {
-        public Mock<IRepository<WeeklyReport>> WeeklyReportRepository { get; set; }
+        public Mock<IWeeklyReportRepository<WeeklyReport>> WeeklyReportRepository { get; set; }
 
         public WeeklyReportControllerFixture()
         {
-            WeeklyReportRepository = new Mock<IRepository<WeeklyReport>>();
+            WeeklyReportRepository = new Mock<IWeeklyReportRepository<WeeklyReport>>();
         }
 
         public WeeklyReportController GetWeeklyReportController()
