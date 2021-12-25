@@ -31,7 +31,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
 
         [HttpGet]
         [Route("/api/report-to/{idMemberReportTo}")]
-        public ActionResult<List<ReportsFromTo>> ReadReportTo([FromRoute] string idMemberReportTo)
+        public ActionResult<List<string[]>> ReadReportTo([FromRoute] string idMemberReportTo)
         {
             if (!Regex.IsMatch(idMemberReportTo, @"^\d+$"))
             {
@@ -47,7 +47,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         }
         [HttpGet]
         [Route("/api/report-from/{idMemberReportFrom}")]
-        public ActionResult<List<ReportsFromTo>> ReadReportFrom([FromRoute] string idMemberReportFrom)
+        public ActionResult<List<string[]>> ReadReportFrom([FromRoute] string idMemberReportFrom)
         {
             if (!Regex.IsMatch(idMemberReportFrom, @"^\d+$"))
             {

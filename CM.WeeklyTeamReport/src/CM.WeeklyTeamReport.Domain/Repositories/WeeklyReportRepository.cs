@@ -33,7 +33,6 @@ namespace CM.WeeklyTeamReport.Domain
             connection.Open();
             return connection;
         }
-
         public WeeklyReport Create(WeeklyReport weeklyReport)
         {
             using (var connection = GetSqlConnection())
@@ -138,7 +137,6 @@ namespace CM.WeeklyTeamReport.Domain
             return null;
         }
 
-
         public WeeklyReport Update(WeeklyReport weeklyReport)
         {
             using (var connection = GetSqlConnection())
@@ -232,7 +230,6 @@ namespace CM.WeeklyTeamReport.Domain
         {
             throw new NotImplementedException();
         }
-
       
         public List<WeeklyReport> GetWeeklyReports(int companyId, int teamMemberId, string dateFrom, string dateTo)
         {
@@ -331,7 +328,6 @@ namespace CM.WeeklyTeamReport.Domain
                 return returnedReports;
             }
         }
-
         public List<WeeklyReport> ReadAllById(int teamMemberId)
         {
             List<WeeklyReport> weeklyReports = new();
