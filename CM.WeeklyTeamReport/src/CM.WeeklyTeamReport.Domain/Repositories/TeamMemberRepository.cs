@@ -237,11 +237,11 @@ namespace CM.WeeklyTeamReport.Domain
                 {
                     Value = teamMemberId
                 };
-                SqlParameter FirstDate = new("@FirstDate", SqlDbType.NVarChar, 8)
+                SqlParameter FirstDate = new("@FirstDate", SqlDbType.NVarChar, 10)
                 {
                     Value = firstDate.Replace("-","")
                 };
-                SqlParameter LastDate = new("@LastDate", SqlDbType.NVarChar, 8)
+                SqlParameter LastDate = new("@LastDate", SqlDbType.NVarChar, 10)
                 {
                     Value = lastDate.Replace("-", "")
                 };
@@ -276,11 +276,11 @@ namespace CM.WeeklyTeamReport.Domain
                 {
                     Value = teamMemberId
                 };
-                SqlParameter FirstDate = new("@FirstDate", SqlDbType.NVarChar, 8)
+                SqlParameter FirstDate = new("@FirstDate", SqlDbType.NVarChar, 10)
                 {
                     Value = firstDate
                 };
-                SqlParameter LastDate = new("@LastDate", SqlDbType.NVarChar, 8)
+                SqlParameter LastDate = new("@LastDate", SqlDbType.NVarChar, 10)
                 {
                     Value = lastDate
                 };

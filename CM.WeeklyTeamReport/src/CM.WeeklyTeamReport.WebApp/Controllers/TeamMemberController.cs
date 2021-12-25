@@ -149,8 +149,8 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             var teamMembers = _repository.ReadAllById(companyId);
             List<ReportHistory> result = new();
             Dictionary<string, int[]> tempDBResult;
-            string nineWeeksAgoDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek - (7 * 9) + 1).ToString("yyyy-MM-dd");
-            
+            string nineWeeksAgoDate = dateFrom;
+
             foreach (TeamMember teamMember in teamMembers)
             {
                 tempDBResult = _repository.ReadReportHistory(companyId, teamMember.TeamMemberId, dateFrom, dateTo);
@@ -195,7 +195,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             var teamMembers = _repository.ReadAllById(companyId);
             List<ReportHistory> result = new();
             Dictionary<string, int[]> tempDBResult;
-            string nineWeeksAgoDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek - (7 * 9) + 1).ToString("yyyy-MM-dd");
+            string nineWeeksAgoDate = dateFrom;
 
             foreach (TeamMember teamMember in teamMembers)
             {
