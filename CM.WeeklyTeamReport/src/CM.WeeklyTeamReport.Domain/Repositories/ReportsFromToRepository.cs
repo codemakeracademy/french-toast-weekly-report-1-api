@@ -7,8 +7,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CM.WeeklyTeamReport.Domain
 {
+    public interface IReportsFromTo<TEntity> : IRepository<ReportsFromTo>
+    {
+        public List<string[]> ReadReportTo(int idMemberTo);
+        public List<string[]> ReadReportFrom(int idMemberFrom);
+        public void DeleteFromTo(int reportTo, int reportFrom);
+    }
     [ExcludeFromCodeCoverage]
-    public class ReportsFromToRepository : IRepository<ReportsFromTo>
+    public class ReportsFromToRepository : IReportsFromTo<ReportsFromTo>
     {
         private readonly IConfiguration _configuration;
         public ReportsFromToRepository(IConfiguration configuration)

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CM.WeeklyTeamReport.WebApp.Controllers
 {
@@ -12,18 +13,20 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
     [Route("api/report-from-to")]
     public class ReportsFromToController : ControllerBase
     {
-        private readonly IRepository<ReportsFromTo> _repository;
+        private readonly IReportsFromTo<ReportsFromTo> _repository;
         private readonly IConfiguration _configuration;
+        [ExcludeFromCodeCoverage]
         [ActivatorUtilitiesConstructor]
-        public ReportsFromToController(IRepository<ReportsFromTo> repository, IConfiguration configuration)
+        public ReportsFromToController(IReportsFromTo<ReportsFromTo> repository, IConfiguration configuration)
         {
             _repository = repository;
             _configuration = configuration;
         }
-        public ReportsFromToController(IRepository<ReportsFromTo> repository)
+        public ReportsFromToController(IReportsFromTo<ReportsFromTo> repository)
         {
             _repository = repository;
         }
+        [ExcludeFromCodeCoverage]
         public ReportsFromToController()
         {
 
@@ -37,12 +40,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             {
                 return new BadRequestObjectResult("idMemberReportTo should be positive integer.");
             }
-            ReportsFromToRepository reportsFromToRepository = new(_configuration);
-            var result = reportsFromToRepository.ReadReportTo(Convert.ToInt32(idMemberReportTo));
-            if (result == null)
-            {
-                return new NotFoundObjectResult($"No one sends a report to Member {idMemberReportTo}");
-            }
+            var result = _repository.ReadReportTo(Convert.ToInt32(idMemberReportTo));
             return new OkObjectResult(result);
         }
         [HttpGet]
@@ -53,12 +51,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             {
                 return new BadRequestObjectResult("idMemberReportTo should be positive integer.");
             }
-            ReportsFromToRepository reportsFromToRepository = new(_configuration);
-            var result = reportsFromToRepository.ReadReportFrom(Convert.ToInt32(idMemberReportFrom));
-            if (result == null)
-            {
-                return new NotFoundObjectResult($"No one sends a report to Member {idMemberReportFrom}");
-            }
+            var result = _repository.ReadReportFrom(Convert.ToInt32(idMemberReportFrom));
             return new OkObjectResult(result);
         }
 
@@ -74,8 +67,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
             {
                 return new BadRequestObjectResult("idMemberFrom should be positive integer.");
             }
-            ReportsFromToRepository reportsFromToRepository = new(_configuration);
-            reportsFromToRepository.DeleteFromTo(Convert.ToInt32(idMemberReportTo), Convert.ToInt32(idMemberReportFrom));
+            _repository.DeleteFromTo(Convert.ToInt32(idMemberReportTo), Convert.ToInt32(idMemberReportFrom));
             return new OkObjectResult($"Member {idMemberReportFrom} don't send reports to member {idMemberReportTo} anymore.");
         }
 
@@ -87,7 +79,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
                 return new BadRequestObjectResult("Company should not be null.");
             }
             var result = _repository.Create(reportFromTo);
-            return new OkObjectResult("got it");
+            return new OkObjectResult("Link between members created");
         }
     }
 }
