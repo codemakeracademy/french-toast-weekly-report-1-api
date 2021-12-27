@@ -2,9 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using CM.WeeklyTeamReport.WebApp.Email;
 using System;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace CM.WeeklyTeamReport.WebApp.Controllers
 {
@@ -12,8 +12,21 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
     [Route("api/invite")]
     public class EmailServiceController : ControllerBase
     {
+        private readonly ISendEmail _repository;
+        private readonly IConfiguration _configuration;
+
         [ExcludeFromCodeCoverage]
         [ActivatorUtilitiesConstructor]
+        public EmailServiceController(ISendEmail repository, IConfiguration configuration)
+        {
+            _repository = repository;
+            _configuration = configuration;
+        }
+        public EmailServiceController(ISendEmail repository)
+        {
+            _repository = repository;
+        }
+        [ExcludeFromCodeCoverage]
         public EmailServiceController()
         {
         }
@@ -21,9 +34,7 @@ namespace CM.WeeklyTeamReport.WebApp.Controllers
         [HttpPost]
         public async void SendInvite([FromBody] EmailSet emailData)
         {
-            EmailService emailService = new();
-            await emailService.SendEmailAsync(emailData);
-            //return RedirectToAction("Index");
+            await _repository.SendEmailAsync(emailData);
         }
 
     }

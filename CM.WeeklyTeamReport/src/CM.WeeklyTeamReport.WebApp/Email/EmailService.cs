@@ -5,10 +5,17 @@ using System.Threading.Tasks;
 using MimeKit;
 using MailKit.Net.Smtp;
 using CM.WeeklyTeamReport.WebApp.Controllers;
+using System.Diagnostics.CodeAnalysis;
 
-namespace CM.WeeklyTeamReport.WebApp.Email
+namespace CM.WeeklyTeamReport.WebApp
 {
-    public class EmailService
+    public interface ISendEmail
+    {
+        public Task SendEmailAsync(EmailSet emailData);
+    }
+    
+    [ExcludeFromCodeCoverage]
+    public class EmailService : ISendEmail
     {
         public async Task SendEmailAsync(EmailSet emailData)
         {

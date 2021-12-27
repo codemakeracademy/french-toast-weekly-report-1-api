@@ -29,7 +29,8 @@ namespace CM.WeeklyTeamReport.WebApp
             services.AddTransient<IRepository<Company>, CompanyRepository>();
             services.AddTransient<ITeamMemberRepository<TeamMember>, TeamMemberRepository>();
             services.AddTransient<IWeeklyReportRepository<WeeklyReport>, WeeklyReportRepository>();
-            services.AddTransient<IRepository<ReportsFromTo>, ReportsFromToRepository>();
+            services.AddTransient<IReportsFromTo<ReportsFromTo>, ReportsFromToRepository>();
+            services.AddTransient<ISendEmail, EmailService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo

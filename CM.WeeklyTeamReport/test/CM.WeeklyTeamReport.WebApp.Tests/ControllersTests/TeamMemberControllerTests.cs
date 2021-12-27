@@ -16,7 +16,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
             var fixture = new TeamMemberControllerFixture();
             fixture.TeamMemberRepository
                 .Setup(x => x.ReadAllById(1))
-                .Returns(new List<TeamMember>() { new TeamMember()});
+                .Returns(new List<TeamMember>() { new TeamMember() });
             var controller = fixture.GetTeamMemberController();
             var actionResult = (OkObjectResult)controller.ReadAllById("1").Result;
             var teamMember = (List<TeamMember>)actionResult.Value;
@@ -63,7 +63,7 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
             actionResult.Should().BeOfType<NotFoundObjectResult>();
             actionResult.StatusCode.Should().Be(404);
             fixture.TeamMemberRepository.Verify(x => x.ReadAll(), Times.Once);
-            
+
         }
         [Fact]
         public void ShouldReturnMemebrBySubject()
@@ -299,6 +299,46 @@ namespace CM.WeeklyTeamReport.WebApp.Tests
                 TeamMemberReports = reportData
             };
             reportHistory.Should().NotBeNull();
+        }
+        [Fact]
+        public void ShouldBeAbleToReadReportHistory()
+        {/*
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadReportHistory(1, 2, "2021-12-12", "2021-12-13"))
+                .Returns(new Dictionary<string, int[]>());
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (OkObjectResult)controller.ReadReportHistory(1, "2021-12-12", "2021-12-13").Result;
+            actionResult.Should().BeOfType<OkObjectResult>();
+            actionResult.StatusCode.Should().Be(200);
+            fixture.TeamMemberRepository.Verify(x => x.ReadReportHistory(1, 2, "2021-12-12", "2021-12-13"), Times.Once);
+        */
+        }
+        [Fact]
+        public void ShouldReturnBadRequestWhenReadReportHistory()
+        {
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadReportHistory(1, 2, "2021-12-12", "2021-12-13"))
+                .Returns(new Dictionary<string, int[]>());
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (BadRequestObjectResult)controller.ReadReportHistory(-1, "2021-12-12", "2021-12-13").Result;
+            actionResult.Should().BeOfType<BadRequestObjectResult>();
+            actionResult.StatusCode.Should().Be(400);
+            fixture.TeamMemberRepository.Verify(x => x.ReadReportHistory(1, 2, "2021-12-12", "2021-12-13"), Times.Never);
+        }
+        [Fact]
+        public void ShouldReturnBadRequestWhenReadReportHistory2ndConstructor()
+        {
+            var fixture = new TeamMemberControllerFixture();
+            fixture.TeamMemberRepository
+                .Setup(x => x.ReadReportHistory(1, 2, "2021-12-12", "2021-12-13"))
+                .Returns(new Dictionary<string, int[]>());
+            var controller = fixture.GetTeamMemberController();
+            var actionResult = (BadRequestObjectResult)controller.ReadReportHistory(-1, "2021-12-12", "2021-12-13",3).Result;
+            actionResult.Should().BeOfType<BadRequestObjectResult>();
+            actionResult.StatusCode.Should().Be(400);
+            fixture.TeamMemberRepository.Verify(x => x.ReadReportHistory(1, 2, "2021-12-12", "2021-12-13"), Times.Never);
         }
     }
 
